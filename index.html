@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="CorrectVLA: When and How to Fix Vision-Language-Action Models at Inference Time">
+  <meta name="keywords" content="VLA, Vision-Language-Action, Inference-Time Correction, Robot Learning, LIBERO">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CorrectVLA</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Hero / Title                                                           -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">CorrectVLA: When and How to Fix Vision-Language-Action Models at Inference Time</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Anonymous Authors</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark" style="pointer-events: none; opacity: 0.5;">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv (Coming Soon)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark" style="pointer-events: none; opacity: 0.5;">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper (Coming Soon)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark" style="pointer-events: none; opacity: 0.5;">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code (Coming Soon)</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Abstract                                                               -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Vision-Language-Action (VLA) models demonstrate strong semantic understanding yet exhibit systematic failures during deployment. The conditions under which these failures occur, and whether they can be corrected without retraining, remain poorly understood. In this paper, we take steps toward addressing this gap. We present <strong>CorrectVLA</strong>, a framework that translates task-level natural language corrections into additive action magnitude adjustments without modifying policy weights. A human provides a single task-level correction, applied uniformly across all rollouts without per-episode intervention.
+          </p>
+          <p>
+            In simulation, CorrectVLA recovers execution misalignment failures across both in-distribution and out-of-distribution tasks. In real-robot experiments on a UFactory xArm7 under environment shift, CorrectVLA achieves 95% success where the base policy drops to 10%, generalizing across object locations and identities. Through a taxonomy of failure modes on LIBERO-90, we find that execution misalignment failures, where the policy reaches the correct target but miscalibrates action magnitudes, represent the correctable subset, while other failure modes where semantic comprehension itself breaks down are not amenable to this approach. The approach succeeds when policies possess strategic correctness and fails when fundamental comprehension is absent, establishing a practical operational boundary for inference-time correction.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Method Overview                                                        -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Method</h2>
+        <div class="content has-text-justified">
+          <p>
+            CorrectVLA constructs corrections through three phases: extracting structured parameters from natural language (Phase A), mapping linguistic terms to numeric magnitudes (Phase B), and distributing corrections temporally (Phase C). Feedback is provided once at the task level and reused across all rollouts without per-episode intervention.
+          </p>
+        </div>
+
+        <!-- Method figure -->
+        <div class="has-text-centered" style="margin-bottom: 1.5rem;">
+          <img src="./static/images/correction_comparison.png" alt="Correction Examples" style="max-width: 100%; border-radius: 6px;" loading="lazy">
+          <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
+            <strong>Correction Examples.</strong> &pi;0.5 failures (left, red) are recovered by sparse task-level corrections (center, blue), producing successful execution (right, green).
+          </p>
+        </div>
+
+        <div class="columns is-multiline" style="margin-top: 1.5rem;">
+          <div class="column is-one-third">
+            <div class="box" style="height: 100%;">
+              <h4 class="title is-5">Phase A: Parameter Extraction</h4>
+              <p class="is-size-6">An LLM extracts four structured parameters from natural language feedback: <strong>action dimension</strong> (x/y/z/roll/pitch/yaw/gripper), <strong>direction</strong> (&plusmn;1), <strong>magnitude term</strong>, and <strong>temporal window</strong> [t<sub>start</sub>, t<sub>end</sub>].</p>
+            </div>
+          </div>
+          <div class="column is-one-third">
+            <div class="box" style="height: 100%;">
+              <h4 class="title is-5">Phase B: Magnitude Quantification</h4>
+              <p class="is-size-6">Linguistic magnitude terms map to numeric ranges: <em>slightly</em> &rarr; [0.3, 0.5], <em>more</em> &rarr; [0.5, 0.8], <em>much</em> &rarr; [0.8, 1.0]. The LLM selects a value within the appropriate range.</p>
+            </div>
+          </div>
+          <div class="column is-one-third">
+            <div class="box" style="height: 100%;">
+              <h4 class="title is-5">Phase C: Temporal Distribution</h4>
+              <p class="is-size-6">A piecewise-linear envelope &phi;(t) distributes the correction smoothly across the specified window, ramping from 0 to peak at midpoint then back to 0.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Failure Taxonomy                                                       -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: #fafafa;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Failure Taxonomy</h2>
+        <div class="content has-text-justified">
+          <p>
+            Analyzing 133 task-model evaluations (73 OpenVLA-OFT, 60 &pi;0.5) across LIBERO-90 out-of-distribution tasks reveals four consistent failure modes:
+          </p>
+        </div>
+
+        <div class="columns is-multiline" style="margin-bottom: 1rem;">
+          <div class="column is-3">
+            <div class="notification is-danger is-light">
+              <p class="title is-5">~50%</p>
+              <p class="subtitle is-6">Task Misunderstanding</p>
+              <p class="is-size-7">Policy misreads spatial or relational language and manipulates the wrong object.</p>
+            </div>
+          </div>
+          <div class="column is-3">
+            <div class="notification is-info is-light">
+              <p class="title is-5">~22%</p>
+              <p class="subtitle is-6">Execution Misalignment</p>
+              <p class="is-size-7">Reaches correct target but miscalibrates action magnitude &mdash; grasp too shallow, push too weak.</p>
+            </div>
+          </div>
+          <div class="column is-3">
+            <div class="notification is-warning is-light">
+              <p class="title is-5">~22%</p>
+              <p class="subtitle is-6">Perception Failure</p>
+              <p class="is-size-7">Target object is ignored entirely; the robot wanders without engaging the correct object.</p>
+            </div>
+          </div>
+          <div class="column is-3">
+            <div class="notification is-link is-light">
+              <p class="title is-5">~6%</p>
+              <p class="subtitle is-6">Multi-step Planning</p>
+              <p class="is-size-7">First sub-goal succeeds but the second is abandoned; compound task execution collapses.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="notification is-info" style="margin-bottom: 1.5rem;">
+          <strong>Key Finding:</strong> Only <strong>Execution Misalignment</strong> is amenable to inference-time correction. The other three modes reflect breakdowns in semantic comprehension that magnitude adjustment alone cannot compensate.
+        </div>
+
+        <!-- Taxonomy figure -->
+        <div class="has-text-centered">
+          <img src="./static/images/taxonomy_comparison.png" alt="Failure Taxonomy" style="max-width: 100%; border-radius: 6px;" loading="lazy">
+          <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
+            <strong>Failure Taxonomy of Generalist VLA Policies.</strong> Four failure modes across 133 OOD tasks on LIBERO-90, shown side by side for OpenVLA-OFT and &pi;0.5.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Simulation Results                                                     -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Simulation Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate on LIBERO (MuJoCo, Franka Panda 7-DoF) using &pi;0.5 fine-tuned from DROID. We run 50 trials per task on 40 in-distribution tasks (2,000 rollouts) and 5 trials per task on all 90 LIBERO-90 tasks (450 rollouts) for out-of-distribution evaluation. CorrectVLA is applied only to tasks exhibiting execution misalignment failures.
+          </p>
+        </div>
+
+        <h3 class="title is-4">Table I: Simulation Results</h3>
+        <div class="table-container">
+          <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+              <tr>
+                <th>Setting</th>
+                <th>Metric</th>
+                <th>&pi;0.5</th>
+                <th>VLM Baseline</th>
+                <th><strong>Ours</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="2"><strong>In-Distribution</strong></td>
+                <td>Success rate</td>
+                <td>1861/2000 (93.0%)</td>
+                <td>&mdash;</td>
+                <td><strong>1926/2000 (96.3%)</strong></td>
+              </tr>
+              <tr>
+                <td>Recovery rate</td>
+                <td>0%</td>
+                <td>0%</td>
+                <td><strong>65/139 (46.8%)</strong></td>
+              </tr>
+              <tr>
+                <td rowspan="2"><strong>Out-of-Distribution</strong></td>
+                <td>Success rate</td>
+                <td>122/450 (27.1%)</td>
+                <td>&mdash;</td>
+                <td><strong>155/450 (34.4%)</strong></td>
+              </tr>
+              <tr>
+                <td>Recovery rate</td>
+                <td>0%</td>
+                <td>0%</td>
+                <td><strong>33/328 (10.1%)</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            <strong>In-Distribution:</strong> &pi;0.5 achieves 93.0% success, leaving 139 failures. CorrectVLA recovers 65 of these (46.8% recovery rate), raising overall success to 96.3%. The VLM baseline (GPT-5 mini autonomously generating corrections) recovers nothing.
+          </p>
+          <p>
+            <strong>Out-of-Distribution:</strong> On LIBERO-90, &pi;0.5 achieves 27.1% success (328 failures). CorrectVLA recovers 33 execution misalignment failures (10.1% recovery rate), raising success to 34.4%. The VLM baseline again recovers nothing.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Simulation Video Demonstrations                                        -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: #fafafa;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Simulation Demonstrations</h2>
+        <div class="content has-text-justified">
+          <p>Before/after video comparisons showing base policy failures recovered by CorrectVLA. Left: base policy failure. Right: CorrectVLA success with a single task-level correction.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs is-centered is-boxed is-medium" id="demo-tabs">
+          <ul>
+            <li class="is-active" data-tab="pi05-tab"><a>&#960;0.5</a></li>
+            <li data-tab="oft-tab"><a>OpenVLA-OFT</a></li>
+          </ul>
+        </div>
+
+        <!-- ── pi0.5 Tab ────────────────────────────────────────────── -->
+        <div id="pi05-tab" class="tab-content">
+
+          <h4 class="title is-5">In-Distribution</h4>
+
+          <!-- pi0.5 Spatial -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick up the black bowl on the wooden cabinet and place it on the plate</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./static/videos/pi05/pi05_spatial_ep457_baseline_failure.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./static/videos/pi05/pi05_spatial_ep457_corrected_success.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- pi0.5 Goal -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Open the middle drawer of the cabinet</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./static/videos/pi05/pi05_goal_ep13_baseline_failure.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./static/videos/pi05/pi05_goal_ep13_corrected_success.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <hr>
+          <h4 class="title is-5">Out-of-Distribution (LIBERO-90)</h4>
+
+          <!-- pi0.5 OOD: open top drawer -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Open the top drawer of the cabinet</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./static/videos/pi05/pi05_ood_open_drawer_ep40_baseline_failure.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./static/videos/pi05/pi05_ood_open_drawer_ep40_corrected_success.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- pi0.5 OOD: bowl in drawer -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the black bowl in the top drawer of the cabinet</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./static/videos/pi05/pi05_ood_bowl_drawer_ep11_baseline_failure.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./static/videos/pi05/pi05_ood_bowl_drawer_ep13_corrected_success.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── OpenVLA-OFT Tab ──────────────────────────────────────── -->
+        <div id="oft-tab" class="tab-content" style="display: none;">
+
+          <!-- OFT Spatial -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick up the black bowl on the wooden cabinet and place it on the plate</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./our-case/libero_spatial/epi462_before_2025_11_25-14_50_40--openvla_oft--episode=1--success=False--task=pick_up_the_black_bowl_on_the_wooden_cabinet_and_p.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./our-case/libero_spatial/epi462_2025_11_25-14_52_04--openvla_oft--episode=1--success=True--task=pick_up_the_black_bowl_on_the_wooden_cabinet_and_p.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- OFT Object -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick up the BBQ sauce and place it in the basket</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./our-case/libero_object/epi181_before_2025_11_26-10_05_07--openvla_oft--episode=1--success=False--task=pick_up_the_bbq_sauce_and_place_it_in_the_basket.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./our-case/libero_object/epi181_2025_11_26-10_06_37--openvla_oft--episode=1--success=True--task=pick_up_the_bbq_sauce_and_place_it_in_the_basket.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- OFT Goal -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Open the middle drawer of the cabinet</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./our-case/libero_goal/epi39_before_2025_11_26-10_14_57--openvla_oft--episode=1--success=False--task=open_the_middle_drawer_of_the_cabinet.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./our-case/libero_goal/epi39_2025_11_26-10_16_54--openvla_oft--episode=1--success=True--task=open_the_middle_drawer_of_the_cabinet.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- OFT LIBERO-10 -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the yellow and white mug in the microwave and close it</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./our-case/libero_10/epi462_before_2025_11_26-13_25_17--openvla_oft--episode=1--success=False--task=put_the_yellow_and_white_mug_in_the_microwave_and_.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./our-case/libero_10/epi462_2025_11_26-13_34_10--openvla_oft--episode=1--success=True--task=put_the_yellow_and_white_mug_in_the_microwave_and_.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Real-Robot Results                                                      -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Real-Robot Experiments</h2>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate pick-and-place tasks on a UFactory xArm7 with Robotiq 2F-140 gripper and three RealSense cameras. After relocating the robot base, &pi;0.5 drops from 95% success (19/20) to 10% (2/20). CorrectVLA recovers performance across all three generalization conditions using a single task-level correction.
+          </p>
+        </div>
+
+        <h3 class="title is-4">Table II: Real-Robot Results</h3>
+        <div class="table-container">
+          <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+              <tr>
+                <th>Condition</th>
+                <th>&pi;0.5</th>
+                <th>VLM Baseline</th>
+                <th><strong>Ours</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Same location</td>
+                <td>1/10 (10%)</td>
+                <td>&mdash;</td>
+                <td><strong>10/10 (100%)</strong></td>
+              </tr>
+              <tr>
+                <td>Different location</td>
+                <td>0/5 (0%)</td>
+                <td>&mdash;</td>
+                <td><strong>5/5 (100%)</strong></td>
+              </tr>
+              <tr>
+                <td>Different object + location</td>
+                <td>1/5 (20%)</td>
+                <td>&mdash;</td>
+                <td><strong>4/5 (80%)</strong></td>
+              </tr>
+              <tr style="font-weight: bold; border-top: 2px solid #333;">
+                <td>Total</td>
+                <td>2/20 (10%)</td>
+                <td>&mdash;</td>
+                <td><strong>19/20 (95%)</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Real robot figure -->
+        <div class="has-text-centered" style="margin-top: 1.5rem;">
+          <img src="./static/images/real_robot_comparison.png" alt="Real Robot Results" style="max-width: 100%; border-radius: 6px;" loading="lazy">
+          <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
+            <strong>Real-Robot Results.</strong> After shifting the robot base, &pi;0.5 fails on both pick-and-place tasks due to execution misalignment (left, red). CorrectVLA recovers success on both tasks using a single task-level correction (right, green).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Key Findings                                                           -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="section" style="background-color: #fafafa;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Key Findings</h2>
+        <div class="content has-text-justified">
+
+          <h4 class="title is-5">Sparse corrections propagate through policy dynamics</h4>
+          <p>
+            A small number of targeted action adjustments at critical trajectory moments are sufficient to convert failure into success. After calibrating just a few timesteps, the VLA generates significantly different subsequent actions, enabling task completion without continuous human intervention.
+          </p>
+
+          <h4 class="title is-5">Task semantics and motor execution are separable</h4>
+          <p>
+            The policy's high-level structure &mdash; approach, grasp, transport &mdash; remains intact; only the magnitude at the critical bottleneck requires adjustment. This supports a compositional view of VLA execution: correcting one does not disrupt the other.
+          </p>
+
+          <h4 class="title is-5">Single correction generalizes across rollout variations</h4>
+          <p>
+            Task-level corrections transfer reliably across episodes. A single task-level correction restores success across same-location, different-location, and different-object conditions, confirming that execution misalignment under environment shift is addressable without per-episode intervention.
+          </p>
+
+          <h4 class="title is-5">Operational boundary for inference-time correction</h4>
+          <p>
+            The approach succeeds when policies possess strategic correctness and fails when fundamental comprehension is absent. Task Misunderstanding (~50%) and Perception Failure (~22%) together account for over 70% of failures &mdash; these require training-level interventions. Only Execution Misalignment (~22%) is amenable to correction, establishing a practical boundary.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Footer                                                                 -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            This website template is adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
