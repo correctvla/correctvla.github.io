@@ -276,8 +276,8 @@
         <!-- Tabs -->
         <div class="tabs is-centered is-boxed is-medium" id="demo-tabs">
           <ul>
-            <li class="is-active" data-tab="pi05-tab"><a>&#960;0.5</a></li>
-            <li data-tab="oft-tab"><a>OpenVLA-OFT</a></li>
+            <li class="is-active" data-tab="pi05-tab"><a>&#960;0.5 (Simulation)</a></li>
+            <li data-tab="oft-tab"><a>OpenVLA-OFT (Simulation)</a></li>
           </ul>
         </div>
 
@@ -316,6 +316,57 @@
               <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
               <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
                 <source src="./static/videos/pi05/pi05_goal_ep13_corrected_success.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- pi0.5 Wine Bottle -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the wine bottle on the rack</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./static/videos/pi05/pi05_goal_ep477_baseline_failure.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./static/videos/pi05/pi05_goal_ep477_corrected_success.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- pi0.5 Bowl on Cabinet -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the bowl on top of the cabinet</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./static/videos/pi05/pi05_goal_ep210_baseline_failure.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./static/videos/pi05/pi05_goal_ep210_corrected_success.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- pi0.5 Mug in Microwave -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the yellow and white mug in the microwave and close it</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./static/videos/pi05/pi05_10_ep455_baseline_failure.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./static/videos/pi05/pi05_10_ep455_corrected_success.mp4" type="video/mp4">
               </video>
             </div>
           </div>
@@ -412,6 +463,40 @@
             </div>
           </div>
 
+          <!-- OFT Wine Bottle -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the wine bottle on the rack</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./our-case/libero_goal/epi459_before_2025_11_26-10_40_12--openvla_oft--episode=1--success=False--task=put_the_wine_bottle_on_the_rack.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./our-case/libero_goal/epi459_2025_11_26-10_45_47--openvla_oft--episode=1--success=True--task=put_the_wine_bottle_on_the_rack.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <!-- OFT Tomato Sauce -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick up the tomato sauce and place it in the basket</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./our-case/libero_object/epi268_before_2025_11_26-10_12_04--openvla_oft--episode=1--success=False--task=pick_up_the_tomato_sauce_and_place_it_in_the_baske.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./our-case/libero_object/epi268_2025_11_26-10_13_40--openvla_oft--episode=1--success=True--task=pick_up_the_tomato_sauce_and_place_it_in_the_baske.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
           <!-- OFT LIBERO-10 -->
           <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the yellow and white mug in the microwave and close it</p>
           <div class="columns">
@@ -429,6 +514,90 @@
             </div>
           </div>
 
+          <!-- OFT Moka Pots -->
+          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put both moka pots on the stove</p>
+          <div class="columns">
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+                <source src="./our-case/libero_10/epi409_before_2025_11_26-11_57_02--openvla_oft--episode=1--success=False--task=put_both_moka_pots_on_the_stove.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-half">
+              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+                <source src="./our-case/libero_10/epi409_2025_11_26-12_02_27--openvla_oft--episode=1--success=True--task=put_both_moka_pots_on_the_stove.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- Real-Robot Video Demonstrations                                        -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Real-Robot Demonstrations</h2>
+        <div class="content has-text-justified">
+          <p>After relocating the robot base, &pi;0.5 consistently fails pick-and-place tasks due to execution misalignment. CorrectVLA recovers success using a single task-level correction, generalizing across object positions and identities on a UFactory xArm7.</p>
+        </div>
+
+        <!-- Pick-and-place left -->
+        <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick and place (same location)</p>
+        <div class="columns">
+          <div class="column is-half">
+            <p class="has-text-centered has-text-weight-bold has-text-danger">&pi;0.5 (Failure)</p>
+            <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+              <source src="./static/videos/real-robot/pi05_failure_left.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="column is-half">
+            <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+            <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+              <source src="./static/videos/real-robot/ours_success_left.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+
+        <!-- Pick-and-place right (different location) -->
+        <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick and place (different location)</p>
+        <div class="columns">
+          <div class="column is-half">
+            <p class="has-text-centered has-text-weight-bold has-text-danger">&pi;0.5 (Failure)</p>
+            <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+              <source src="./static/videos/real-robot/pi05_failure_left2.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="column is-half">
+            <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+            <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+              <source src="./static/videos/real-robot/ours_success_right.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+
+        <!-- Pick-and-place cube (different object + location) -->
+        <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick and place (different object + location)</p>
+        <div class="columns">
+          <div class="column is-half">
+            <p class="has-text-centered has-text-weight-bold has-text-danger">&pi;0.5 (Failure)</p>
+            <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
+              <source src="./static/videos/real-robot/pi05_failure_cube.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="column is-half">
+            <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
+            <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
+              <source src="./static/videos/real-robot/ours_success_cube.mp4" type="video/mp4">
+            </video>
+          </div>
         </div>
       </div>
     </div>
