@@ -89,15 +89,16 @@ video {
   margin-bottom: 2rem;
 }
 
+/* Sized to sit alongside the simulation clips without dominating the page */
 .rr-item {
-  flex: 0 1 300px;
+  flex: 0 1 380px;
   min-width: 0;
 }
 
 .rr-item video {
   display: block;
   width: 100%;
-  aspect-ratio: 406 / 720;
+  aspect-ratio: 4 / 5;
   height: auto;
   object-fit: cover;
   background: #000;
