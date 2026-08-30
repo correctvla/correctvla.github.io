@@ -79,6 +79,37 @@ video {
   border-radius: 8px;
 }
 
+/* ── Real-robot demos ────────────────────────────────────────────────── */
+/* Clips vary in source aspect (one is 1280x720, the rest 406x720), so a
+   fixed portrait box keeps every pair the same size. */
+.rr-pair {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.rr-item {
+  flex: 0 1 300px;
+  min-width: 0;
+}
+
+.rr-item video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 406 / 720;
+  height: auto;
+  object-fit: cover;
+  background: #000;
+  border-radius: 6px;
+}
+
+@media screen and (max-width: 768px) {
+  .rr-pair {
+    gap: .75rem;
+  }
+}
+
 /* ── Cinematic hero ──────────────────────────────────────────────────── */
 .cv-hero {
   background: radial-gradient(120% 120% at 20% 0%, #2b3440 0%, #161b22 55%, #0d1117 100%);
