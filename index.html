@@ -1,673 +1,430 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description"
-        content="What Can One Sentence Fix? A Failure Taxonomy and a Minimal Language Correction for Frozen VLA Policies">
-  <meta name="keywords" content="VLA, Vision-Language-Action, Learning from Corrections, Failure Taxonomy, Robot Learning, LIBERO">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CorrectVLA</title>
+  <title>What Can One Sentence Fix?</title>
+  <meta name="description" content="A failure taxonomy and a minimal language correction for frozen vision-language-action policies: one sentence per task, added as a bias, recovers execution-misalignment failures in simulation and on a real robot.">
+  <meta name="keywords" content="VLA, Vision-Language-Action, Learning from Corrections, Failure Taxonomy, Robot Learning, LIBERO">
+  <meta property="og:title" content="What Can One Sentence Fix?">
+  <meta property="og:description" content="A failure taxonomy and a minimal language correction for frozen VLA policies.">
+  <meta property="og:image" content="https://correctvla.github.io/static/images/correction_comparison.png">
+  <meta name="theme-color" content="#0f1419">
+  <link rel="icon" href="./static/images/favicon.svg" type="image/svg+xml">
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/index.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,400;1,6..72,500&display=swap">
+  <link rel="stylesheet" href="./static/css/site.css">
+  <script type="module" src="./static/js/main.js"></script>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Hero / Title                                                           -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="cv-hero">
-  <div class="cv-hero-inner">
+<!-- Top navigation: appears once the hero scrolls away -->
+<nav class="topnav" id="topnav" aria-label="Sections">
+  <div class="topnav__inner">
+    <a class="topnav__brand" href="#top">One Sentence</a>
+    <div class="topnav__links">
+      <a href="#overview">Overview</a>
+      <a href="#taxonomy">Taxonomy</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#demos">Rollouts</a>
+      <a href="#human">Human</a>
+      <a href="#discussion">Discussion</a>
+    </div>
+  </div>
+</nav>
 
-    <div class="cv-hero-text">
-      <p class="cv-eyebrow">Learning from Corrections &middot; Failure Taxonomy &middot; VLA</p>
-      <h1 class="cv-title">What Can One Sentence Fix?</h1>
-      <p class="cv-subtitle">A Failure Taxonomy and a Minimal Language Correction for Frozen VLA Policies</p>
-
-      <p class="cv-authors">Anonymous Author(s)</p>
-      <p class="cv-affil">Under review</p>
-
-      <div class="cv-buttons">
-        <a class="cv-btn is-disabled" href="#" aria-disabled="true">
-          <i class="fas fa-file-pdf"></i><span>Paper (Coming Soon)</span>
-        </a>
-        <a class="cv-btn is-disabled" href="#" aria-disabled="true">
-          <i class="fab fa-github"></i><span>Code (Coming Soon)</span>
-        </a>
+<!-- ═══ Hero ═══════════════════════════════════════════════════════════ -->
+<header class="hero" id="top">
+  <div class="hero__inner">
+    <div class="hero__text">
+      <p class="hero__eyebrow">Learning from Corrections &middot; Failure Taxonomy &middot; VLA</p>
+      <h1 class="hero__title">What Can One Sentence Fix?</h1>
+      <p class="hero__subtitle">A Failure Taxonomy and a Minimal Language Correction for Frozen VLA Policies</p>
+      <p class="hero__authors">Anonymous Author(s) <span aria-hidden="true">&middot;</span> Under review</p>
+      <div class="hero__buttons">
+        <span class="btn is-disabled" aria-disabled="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm0 1.5L18.5 8H14zM8 13h8v1.5H8zm0 3h8v1.5H8zm0-6h4v1.5H8z"/></svg>
+          Paper (Coming Soon)
+        </span>
+        <span class="btn is-disabled" aria-disabled="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>
+          Code (Coming Soon)
+        </span>
       </div>
     </div>
 
-    <div class="cv-hero-demo">
-      <figure class="cv-clip is-fail">
+    <div class="hero__demo">
+      <figure class="clip is-fail">
         <video autoplay muted loop playsinline preload="auto">
           <source src="./static/videos/real-robot/pi05_failure_cube.mp4" type="video/mp4">
         </video>
-        <figcaption>
-          <span class="cv-tag">Base Policy</span>
-          <span class="cv-outcome">&#10007; Failure</span>
-        </figcaption>
+        <figcaption><span>Base policy</span><b>&#10007; Failure</b></figcaption>
       </figure>
-
-      <figure class="cv-clip is-pass">
+      <figure class="clip is-pass">
         <video autoplay muted loop playsinline preload="auto">
           <source src="./static/videos/real-robot/ours_success_cube.mp4" type="video/mp4">
         </video>
-        <figcaption>
-          <span class="cv-tag">CorrectVLA</span>
-          <span class="cv-outcome">&#10003; Success</span>
+        <figcaption><span>+ one sentence</span><b>&#10003; Success</b></figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="hero__note">One sentence per task, written once after a failed rollout and replayed on every later rollout &mdash; the frozen policy does the rest.</p>
+</header>
+
+<main id="main">
+
+<!-- ═══ Overview: four findings + abstract ═════════════════════════════ -->
+<section class="band band--plane" id="overview">
+  <div class="wrap">
+    <p class="kicker">Four findings</p>
+    <h2 class="statement">A sentence can fix a miscalibrated magnitude &mdash; and nothing else.</h2>
+
+    <div class="findings">
+      <article class="finding">
+        <p class="finding__value">23% <span>&middot;</span> 22%</p>
+        <p class="finding__label">of failing instructions are execution misalignment (OpenVLA-OFT &middot; &pi;<sub>0.5</sub>)</p>
+        <h3>A failure taxonomy that is stable across architectures</h3>
+        <p>On 133 failing instructions, both policies fail in the same four ways in nearly the same proportions, and only execution misalignment keeps the task structure intact.</p>
+        <a class="more" href="#taxonomy">Taxonomy</a>
+      </article>
+      <article class="finding">
+        <p class="finding__value">65<span>/</span>139</p>
+        <p class="finding__label">in-distribution failures recovered in simulation (and 33 / 328 out of distribution)</p>
+        <h3>The task, not the episode, as the unit of correction</h3>
+        <p>One retrospective sentence per task, added as a bias, is reused on every failed rollout and every real-robot run.</p>
+        <a class="more" href="#method">Method</a>
+      </article>
+      <article class="finding">
+        <p class="finding__value">30<span>/</span>30</p>
+        <p class="finding__label">same-object pick-and-place after moving the robot base (from 10 / 30) &mdash; long-horizon tasks stay at 0 / 30</p>
+        <h3>The boundary holds on hardware from both sides</h3>
+        <p>After an environment shift, one sentence lifts pick-and-place to 10/10 per run with the same object, but advanced tasks stay at 0/30.</p>
+        <a class="more" href="#real-robot">Real robot</a>
+      </article>
+      <article class="finding">
+        <p class="finding__value">0</p>
+        <p class="finding__label">failures recovered when GPT-5 mini writes the same correction from the same video</p>
+        <h3>The information is in the person</h3>
+        <p>What the person supplies is calibrated timing and magnitude &mdash; not language itself.</p>
+        <a class="more" href="#human">What the human supplies</a>
+      </article>
+    </div>
+
+    <div class="prose abstract">
+      <h2 class="h-plain">Abstract</h2>
+      <p>When a deployed vision-language-action (VLA) policy fails, the person watching it can usually say what went wrong in one sentence. We ask what such a sentence can and cannot fix. We label every failing LIBERO-90 task (out of distribution) for two policies, OpenVLA-OFT and &pi;<sub>0.5</sub>, and find that the failures sort into four modes. One of them, <em>execution misalignment</em>, is the one a single sentence can reach, where the policy reaches the right target but miscalibrates how far or how hard to move, and the other three lack a target or a plan, not a magnitude.</p>
+      <p>For the correctable mode we define the narrowest human correction that can reach it: one retrospective sentence per task, grounded by an LLM into an action dimension, direction, magnitude term, and time window, and added as a bias to the frozen policy&rsquo;s actions. Re-executed on every failed rollout, it recovers 65 of 139 in-distribution and 33 of 328 out-of-distribution failures in simulation. On a real xArm7 after the robot base is moved, one sentence per task raises pick-and-place from 10/30 to 30/30 in each of two same-object conditions and from 2/30 to 24/30 with a new object, while two long-horizon tasks stay at 0/30 with and without correction, as the taxonomy predicts.</p>
+      <p>A naively prompted VLM given the same failure video fails to recover a single case: the value of the correction is the person&rsquo;s calibrated sense of magnitude and timing, not language itself. A correction touches less than a second of a trajectory, not the whole of it: because a policy&rsquo;s miscalibration recurs across episodes, fixing that one moment once lets the policy complete the rest with its own reasoning, episode after episode.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Failure taxonomy ═══════════════════════════════════════════════ -->
+<section class="band" id="taxonomy">
+  <div class="wrap">
+    <p class="kicker">Failure taxonomy &amp; correctability</p>
+    <h2 class="statement">Four ways to fail. Only one keeps the target and the plan.</h2>
+    <div class="prose">
+      <p>We ran OpenVLA-OFT and &pi;<sub>0.5</sub>, both fine-tuned on the same 40 LIBERO tasks, on all 90 LIBERO-90 tasks &mdash; out of distribution in their instructions, not their scenes. Every instruction with at least one failed rollout was labelled with its key failure frame and one of four modes: 73 instructions for OpenVLA-OFT and 60 for &pi;<sub>0.5</sub> (holding all 328 of its failed rollouts), 133 instruction&ndash;model pairs in all.</p>
+    </div>
+
+    <figure class="chart-card">
+      <figcaption class="chart-card__head">
+        <strong>Share of failing instructions by mode</strong>
+        <span>133 instruction&ndash;model pairs, LIBERO-90</span>
+      </figcaption>
+      <div class="legend">
+        <span><i class="sw sw--accent"></i>Execution misalignment &mdash; a sentence can reach it</span>
+        <span><i class="sw sw--neutral"></i>Lacks a target or a plan</span>
+      </div>
+      <div id="chart-taxonomy" class="taxbars" role="img" aria-label="Execution misalignment is 23% of OpenVLA-OFT and 22% of pi0.5 failing instructions; task misunderstanding 47% and 50%; perception failure 25% and 22%; multi-step planning 5% and 6%."></div>
+      <details class="table-view">
+        <summary>Table view</summary>
+        <table>
+          <thead><tr><th>Mode</th><th>OpenVLA-OFT</th><th>&pi;<sub>0.5</sub></th></tr></thead>
+          <tbody>
+            <tr><td>Execution misalignment</td><td>23%</td><td>22%</td></tr>
+            <tr><td>Task misunderstanding</td><td>47%</td><td>50%</td></tr>
+            <tr><td>Perception failure</td><td>25%</td><td>22%</td></tr>
+            <tr><td>Multi-step planning</td><td>5%</td><td>6%</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </figure>
+
+    <div class="modes">
+      <article class="mode is-reachable">
+        <header><h3>Execution misalignment</h3><span class="share">23% &middot; 22%</span></header>
+        <p>The right target is reached, but how far or how hard is miscalibrated &mdash; a grasp a few centimeters shallow, a push a little weak.</p>
+        <p class="mode__eg"><q>close the top drawer</q> &rarr; drawer still open</p>
+        <p class="ask">Ask a person for <b>a magnitude</b></p>
+      </article>
+      <article class="mode">
+        <header><h3>Task misunderstanding</h3><span class="share">47% &middot; 50%</span></header>
+        <p>A relative spatial reference is resolved in the image frame rather than the table frame.</p>
+        <p class="mode__eg"><q>the middle bowl</q> &rarr; the bowl in the middle of the image, not of the row</p>
+        <p class="ask">Ask a person for <b>a target</b></p>
+      </article>
+      <article class="mode">
+        <header><h3>Perception failure</h3><span class="share">25% &middot; 22%</span></header>
+        <p>The policy picks the wrong object, either a look-alike or a plainly different one.</p>
+        <p class="mode__eg"><q>pick up the milk</q> &rarr; takes the can</p>
+        <p class="ask">Ask a person for <b>a target</b></p>
+      </article>
+      <article class="mode">
+        <header><h3>Multi-step planning</h3><span class="share">5% &middot; 6%</span></header>
+        <p>The first sub-goal succeeds and the second is abandoned.</p>
+        <p class="mode__eg"><q>turn on stove + place pan</q> &rarr; pan never moved</p>
+        <p class="ask">Ask a person for <b>a plan</b></p>
+      </article>
+    </div>
+
+    <div class="callout">
+      <p><strong>The operational boundary.</strong> A magnitude bias reaches execution misalignment and nothing else, because the other modes lack a target or a plan, not a magnitude. Read the other way, the taxonomy says what a robot should ask a person for: a magnitude in one mode, a target or a plan in the others.</p>
+    </div>
+
+    <figure class="paper-fig is-tall">
+      <button class="zoom" type="button" aria-label="Enlarge failure taxonomy figure">
+        <img src="./static/images/taxonomy_comparison.png" alt="Failure taxonomy: one rollout per mode for OpenVLA-OFT and pi0.5, with the key failure frame outlined." loading="lazy" width="2195" height="1552">
+      </button>
+      <figcaption><b>Failure taxonomy.</b> One rollout per mode for each model; the outlined frame is the key failure point. Click to enlarge.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ═══ Method ═════════════════════════════════════════════════════════ -->
+<section class="band band--plane" id="method">
+  <div class="wrap">
+    <p class="kicker">Human correction</p>
+    <h2 class="statement">One sentence becomes a short bias on a frozen policy.</h2>
+    <div class="prose">
+      <p>A frozen policy outputs 7-D actions (x, y, z, roll, pitch, yaw, gripper). A rollout fails; a person watches it once and writes a few sentences. We seek a bias that turns the near-miss into a success when added to the policy&rsquo;s actions &mdash; weights frozen, no new data, and the same bias reused for every later rollout of the task. The person never types a number.</p>
+    </div>
+
+    <ol class="pipeline">
+      <li><span class="step">1</span><h3>Watch</h3><p>A person watches one failed rollout and writes one or two sentences for most tasks &mdash; never more than five.</p></li>
+      <li><span class="step">2</span><h3>Ground</h3><p>GPT-5 mini grounds each sentence into a 4-tuple: action dimension, sign, magnitude term, time window.</p></li>
+      <li><span class="step">3</span><h3>Shape</h3><p>The term sets a signed weight &mdash; <em>slightly</em> 0.3&ndash;0.5, <em>more</em> 0.5&ndash;0.8, <em>much</em> 0.8&ndash;1.0 &mdash; under an envelope that peaks mid-window.</p></li>
+      <li><span class="step">4</span><h3>Replay</h3><p>The bias is added to the frozen policy&rsquo;s actions on every later rollout of the task.</p></li>
+    </ol>
+
+    <div class="grounding">
+      <q class="sentence">Move left more in 1 to 2 seconds</q>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <code class="tuple">(y, &minus;1, more, [1.0, 2.0])</code>
+    </div>
+
+    <!-- Interactive: where the correction sits in time -->
+    <figure class="chart-card explainer" id="explainer">
+      <figcaption class="chart-card__head">
+        <strong>Where the correction sits in time</strong>
+        <span>Two &pi;<sub>0.5</sub> rollouts from the paper. Hover or drag across the timeline.</span>
+      </figcaption>
+      <div class="seg" role="tablist" aria-label="Example correction"></div>
+      <div class="explainer__body">
+        <div class="explainer__meta">
+          <p class="explainer__task"></p>
+          <q class="sentence"></q>
+          <div class="tuples"></div>
+          <p class="explainer__stat"></p>
+          <p class="explainer__note"></p>
+          <a class="more explainer__watch" href="#demos" hidden>Watch this rollout</a>
+        </div>
+        <div class="timeline" aria-hidden="true">
+          <div class="timeline__track">
+            <svg class="timeline__env" preserveAspectRatio="none"></svg>
+            <span class="timeline__own">policy on its own</span>
+            <span class="timeline__cursor"></span>
+          </div>
+          <div class="timeline__axis"></div>
+          <div class="timeline__key">
+            <span><i class="sw sw--accent"></i>Human window &mdash; envelope &phi;(t)</span>
+            <span><i class="sw sw--wash"></i>Policy on its own</span>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <div class="eq" aria-label="delta sub d of t equals the sum over corrections k on dimension d of w k times phi k of t; the corrected action equals the policy action plus delta.">
+      <span>&delta;<sub>d</sub>(t) = &sum;<sub>k : d<sub>k</sub> = d</sub> w<sub>k</sub> &phi;<sub>k</sub>(t)</span>
+      <span>a<sup>corr</sup><sub>t,d</sub> = a<sub>t,d</sub> + &delta;<sub>d</sub>(t)</span>
+    </div>
+
+    <div class="twocol">
+      <div class="note-card">
+        <h3>Action-space adaptation</h3>
+        <p>Corrections are specified in Cartesian space to match how people speak (&ldquo;move left,&rdquo; &ldquo;move up&rdquo;). The real xArm7 runs under joint-velocity control, so a Cartesian correction is mapped to joint velocities through the Jacobian pseudoinverse &mdash; the minimum-norm joint velocity that realizes the requested end-effector motion.</p>
+      </div>
+      <div class="note-card">
+        <h3>What the signal assumes</h3>
+        <ul class="assume">
+          <li><b>A1</b> The policy has the right target and plan; only how far or how hard is wrong. <a href="#taxonomy">Measured by the taxonomy</a></li>
+          <li><b>A2</b> A few biases turn the near-miss into a success. <a href="#results">Tested in results</a></li>
+          <li><b>A3</b> One viewing shows a person which dimension drifted and when. <a href="#human">Tested against a VLM</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="figpair">
+      <figure class="paper-fig">
+        <button class="zoom" type="button" aria-label="Enlarge correction examples figure">
+          <img src="./static/images/correction_comparison.png" alt="Failure, correction, and success for two LIBERO tasks." loading="lazy" width="2147" height="772">
+        </button>
+        <figcaption><b>One sentence per task.</b> Failure (red), the correction, success (green). Top: &ldquo;down little, 2.0&ndash;2.3 s&rdquo; recovers a missed bowl grasp. Bottom: &ldquo;left slightly&rdquo; and &ldquo;down slightly, 0.0&ndash;0.5 s&rdquo; recover a drawer that was never opened.</figcaption>
+      </figure>
+      <figure class="paper-fig">
+        <button class="zoom" type="button" aria-label="Enlarge correction timeline figure">
+          <img src="./static/images/correction_timeline.jpg" alt="Frames from a failed and a corrected rollout at the same times, with the human correction window marked in orange." loading="lazy" width="1600" height="1315">
+        </button>
+        <figcaption><b>One correction, then the policy on its own.</b> Failed rollout above, corrected below, at the same times; orange is the human&rsquo;s window.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Results ════════════════════════════════════════════════════════ -->
+<section class="band" id="results">
+  <div class="wrap">
+    <p class="kicker">Does the signal suffice?</p>
+    <h2 class="statement">Where the sentence reaches, it usually suffices.</h2>
+
+    <h3 class="subhead">Simulation &mdash; LIBERO, &pi;<sub>0.5</sub></h3>
+    <div class="prose">
+      <p>We compare the base policy (<code>lerobot/pi05_libero_finetuned</code>); a <em>VLM baseline</em> (GPT-5 mini, naive prompting) that watches the failure video and writes the same 4-tuple with no human input; and CorrectVLA, where a person writes one task-level correction reused across all rollouts. Corrections are applied only to execution-misalignment tasks and re-executed on the base policy&rsquo;s failed episodes: 50 trials on each of 40 LIBERO tasks in distribution, 5 on each of 90 LIBERO-90 tasks out of distribution.</p>
+    </div>
+
+    <div class="grid2">
+      <figure class="chart-card">
+        <figcaption class="chart-card__head">
+          <strong>Task success</strong>
+          <span>Base &pi;<sub>0.5</sub> &rarr; with one sentence per task</span>
         </figcaption>
+        <div class="legend">
+          <span><i class="dot dot--base"></i>Base &pi;<sub>0.5</sub> (VLM baseline adds 0)</span>
+          <span><i class="dot dot--accent"></i>CorrectVLA</span>
+        </div>
+        <div id="chart-success"></div>
+      </figure>
+      <figure class="chart-card">
+        <figcaption class="chart-card__head">
+          <strong>Failures recovered</strong>
+          <span>Out of distribution, only 64 failures sit in a correctable task</span>
+        </figcaption>
+        <div id="chart-funnel"></div>
       </figure>
     </div>
 
-  </div>
+    <figure class="chart-card">
+      <figcaption class="chart-card__head">
+        <strong>Where a correction was written, it usually sufficed</strong>
+        <span>Failed episodes recovered, out-of-distribution tasks with a written correction</span>
+      </figcaption>
+      <div id="chart-pertask"></div>
+      <p class="chart-card__foot">Corrections were written for four of the 13 execution-misalignment tasks, so the 10.1% out-of-distribution recovery is a lower bound on what the channel reaches. No failure in the other three modes was recovered, as the taxonomy predicts.</p>
+      <details class="table-view">
+        <summary>Table 1 &mdash; simulation</summary>
+        <table>
+          <thead><tr><th>Setting</th><th>Metric</th><th>Base &pi;<sub>0.5</sub></th><th>VLM baseline</th><th>CorrectVLA</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="2">In-distribution</td><td>Success</td><td>1861/2000 (93.0%)</td><td>&mdash;</td><td><b>1926/2000 (96.3%)</b></td></tr>
+            <tr><td>Failures recovered</td><td>0</td><td>0</td><td><b>65/139 (46.8%)</b></td></tr>
+            <tr><td rowspan="2">Out-of-distribution</td><td>Success</td><td>122/450 (27.1%)</td><td>&mdash;</td><td><b>155/450 (34.4%)</b></td></tr>
+            <tr><td>Failures recovered</td><td>0</td><td>0</td><td><b>33/328 (10.1%)</b></td></tr>
+          </tbody>
+        </table>
+      </details>
+    </figure>
 
-  <p class="cv-hero-note">
-    One sentence per task, written once after a failed rollout and replayed on every later rollout &mdash; the frozen policy does the rest.
-  </p>
-</section>
-
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Abstract                                                               -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section" style="background-color: #fafafa;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            When a deployed vision-language-action (VLA) policy fails, the person watching it can usually say what went wrong in one sentence. We ask what such a sentence can and cannot fix. We label every failing LIBERO-90 task (out of distribution) for two policies, OpenVLA-OFT and &pi;<sub>0.5</sub>, and find that the failures sort into four modes. One of them, <em>execution misalignment</em>, is the one a single sentence can reach, where the policy reaches the right target but miscalibrates how far or how hard to move, and the other three lack a target or a plan, not a magnitude.
-          </p>
-          <p>
-            For the correctable mode we define the narrowest human correction that can reach it: one retrospective sentence per task, grounded by an LLM into an action dimension, direction, magnitude term, and time window, and added as a bias to the frozen policy&rsquo;s actions. Re-executed on every failed rollout, it recovers 65 of 139 in-distribution and 33 of 328 out-of-distribution failures in simulation. On a real xArm7 after the robot base is moved, one sentence per task raises pick-and-place from 10/30 to 30/30 in each of two same-object conditions and from 2/30 to 24/30 with a new object, while two long-horizon tasks stay at 0/30 with and without correction, as the taxonomy predicts.
-          </p>
-          <p>
-            A naively prompted VLM given the same failure video fails to recover a single case: the value of the correction is the person&rsquo;s calibrated sense of magnitude and timing, not language itself. A correction touches less than a second of a trajectory, not the whole of it: because a policy&rsquo;s miscalibration recurs across episodes, fixing that one moment once lets the policy complete the rest with its own reasoning, episode after episode.
-          </p>
-        </div>
+    <h3 class="subhead" id="real-robot">Real robot &mdash; xArm7, &pi;<sub>0.5</sub>-DROID</h3>
+    <div class="split">
+      <div class="prose">
+        <p>A UFactory xArm7 with a Robotiq 2F-85 gripper and RealSense cameras. &pi;<sub>0.5</sub>-DROID was fine-tuned in one workspace, where it reached 95.0% on pick-and-place across 20 trials. We then moved the robot base, shifting camera viewpoint and workspace geometry, and ran each condition three times with 10 trials each.</p>
       </div>
+      <figure class="paper-fig">
+        <button class="zoom" type="button" aria-label="Enlarge workspace figure">
+          <img src="./static/images/workspace_shift.jpg" alt="The fine-tuning workspace and the shifted workspace after the robot base was moved." loading="lazy" width="1400" height="602">
+        </button>
+        <figcaption>Fine-tuning workspace (a) and the shifted workspace (b).</figcaption>
+      </figure>
     </div>
-  </div>
-</section>
 
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Four Findings                                                          -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Four Findings</h2>
-    <div class="columns is-multiline">
-      <div class="column is-half">
-        <div class="box" style="height: 100%;">
-          <h4 class="title is-5">1. A failure taxonomy that is stable across architectures</h4>
-          <p class="is-size-6">On 133 failing instructions, OpenVLA-OFT and &pi;<sub>0.5</sub> fail in the same four ways in nearly the same proportions, and only one mode, execution misalignment, keeps the task structure intact.</p>
-        </div>
+    <figure class="chart-card">
+      <figcaption class="chart-card__head">
+        <strong>Trials that succeeded after the base was moved</strong>
+        <span>Three runs of 10 trials per condition; one correction per task, not rewritten between runs</span>
+      </figcaption>
+      <div class="legend">
+        <span><i class="dot dot--base"></i>Success, base policy</span>
+        <span><i class="dot dot--accent"></i>Success, with one sentence</span>
+        <span><i class="dot dot--ring"></i>Failure</span>
       </div>
-      <div class="column is-half">
-        <div class="box" style="height: 100%;">
-          <h4 class="title is-5">2. The task, not the episode, as the unit of correction</h4>
-          <p class="is-size-6">One retrospective sentence per task, added as a bias, is reused on every failed rollout and every real-robot run.</p>
-        </div>
-      </div>
-      <div class="column is-half">
-        <div class="box" style="height: 100%;">
-          <h4 class="title is-5">3. The boundary holds on hardware from both sides</h4>
-          <p class="is-size-6">After an environment shift, one sentence lifts pick-and-place to 10/10 with the same object, but advanced tasks stay at 0/30.</p>
-        </div>
-      </div>
-      <div class="column is-half">
-        <div class="box" style="height: 100%;">
-          <h4 class="title is-5">4. The information is in the person</h4>
-          <p class="is-size-6">The correction written by GPT-5 mini from the same video does not recover any trial; what the person supplies is calibrated timing.</p>
-        </div>
-      </div>
+      <div id="chart-robot" class="robot"></div>
+      <p class="chart-card__foot">&dagger; The one run per condition where the object happened to fall inside the fine-tuning distribution. Elsewhere the base policy scored 0/10 to 2/10, every failure a missed grasp.</p>
+      <details class="table-view">
+        <summary>Table 2 &mdash; real robot</summary>
+        <table>
+          <thead><tr><th>Condition</th><th colspan="3">Base &pi;<sub>0.5</sub>-DROID (runs 1&ndash;3)</th><th colspan="3">CorrectVLA (runs 1&ndash;3)</th></tr></thead>
+          <tbody>
+            <tr><td>Environment shift only</td><td>1/10</td><td>9/10</td><td>0/10</td><td><b>10/10</b></td><td><b>10/10</b></td><td><b>10/10</b></td></tr>
+            <tr><td>Object moved</td><td>0/10</td><td>10/10</td><td>0/10</td><td><b>10/10</b></td><td><b>10/10</b></td><td><b>10/10</b></td></tr>
+            <tr><td>Object and location changed</td><td>2/10</td><td>0/10</td><td>0/10</td><td><b>8/10</b></td><td><b>9/10</b></td><td><b>7/10</b></td></tr>
+            <tr><td><em>Human engagement per run</em></td><td>0 s</td><td>0 s</td><td>0 s</td><td>40&ndash;80 s</td><td>40&ndash;80 s</td><td>40&ndash;80 s</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </figure>
+
+    <div class="callout callout--warn">
+      <p><strong>The other side of the boundary.</strong> Two long-horizon tasks, folding a shirt (92.5% before the shift) and stacking boxes, fail in all 30 trials after the shift, with and without correction: outside execution misalignment, the sentence has nothing to reach.</p>
     </div>
+
+    <figure class="paper-fig">
+      <button class="zoom" type="button" aria-label="Enlarge real robot figure">
+        <img src="./static/images/real_robot_comparison.png" alt="After the shift the base policy misses both grasps; one task-level correction restores success." loading="lazy" width="2100" height="810">
+      </button>
+      <figcaption><b>Real robot.</b> After the shift &pi;<sub>0.5</sub> misses both grasps (red); one task-level correction restores success (green).</figcaption>
+    </figure>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Failure Taxonomy                                                       -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section" style="background-color: #fafafa;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Failure Taxonomy and Correctability</h2>
-        <div class="content has-text-justified">
-          <p>
-            We ran OpenVLA-OFT and &pi;<sub>0.5</sub>, both fine-tuned on the same 40 LIBERO tasks (Spatial, Object, Goal, and LIBERO-10), on all 90 LIBERO-90 tasks, none of which is in that set. LIBERO-90 is therefore out of distribution in its instructions, not its scenes. Every instruction with at least one failed rollout was labelled by one annotator with the key failure frame and one of four modes: 73 of the 74 instructions for OpenVLA-OFT and 60 for &pi;<sub>0.5</sub> (holding all 328 of its 450 failed rollouts), 133 instruction-model pairs in total.
-          </p>
-        </div>
+<!-- ═══ Rollouts gallery ═══════════════════════════════════════════════ -->
+<section class="band band--plane" id="demos">
+  <div class="wrap">
+    <p class="kicker">Rollouts</p>
+    <h2 class="statement">Failure and correction, side by side.</h2>
+    <p class="lede">Both clips start together and hold their final frame, so the outcome stays on screen.</p>
 
-        <div class="columns is-multiline" style="margin-bottom: 1rem;">
-          <div class="column is-3">
-            <div class="notification is-danger is-light" style="height: 100%;">
-              <p class="title is-5">47% &middot; 50%</p>
-              <p class="subtitle is-6">Task Misunderstanding</p>
-              <p class="is-size-7">Resolves a relative spatial reference in the image frame rather than the table frame &mdash; &ldquo;the middle bowl&rdquo; becomes the bowl in the middle of the image.</p>
-            </div>
+    <div class="gallery" id="gallery">
+      <div class="seg gallery__groups" role="tablist" aria-label="Policy and setting"></div>
+      <div class="gallery__body">
+        <nav class="gallery__tasks" aria-label="Tasks"></nav>
+        <div class="gallery__stage">
+          <p class="gallery__title"></p>
+          <div class="gallery__pair">
+            <figure class="player is-fail">
+              <div class="player__frame"><video muted playsinline preload="metadata"></video></div>
+              <figcaption><span class="player__who"></span><b>&#10007; Failure</b></figcaption>
+              <div class="player__bar"><i></i></div>
+            </figure>
+            <figure class="player is-pass">
+              <div class="player__frame"><video muted playsinline preload="metadata"></video><span class="player__live" hidden>Correction applied</span></div>
+              <figcaption><span class="player__who"></span><b>&#10003; Success</b></figcaption>
+              <div class="player__bar"><i></i><span class="player__window" hidden></span></div>
+            </figure>
           </div>
-          <div class="column is-3">
-            <div class="notification is-success is-light" style="height: 100%;">
-              <p class="title is-5">23% &middot; 22%</p>
-              <p class="subtitle is-6">Execution Misalignment</p>
-              <p class="is-size-7">The right target is reached, but how far or how hard is miscalibrated &mdash; the grasp is a few centimeters shallow, the push a little weak.</p>
-            </div>
-          </div>
-          <div class="column is-3">
-            <div class="notification is-info is-light" style="height: 100%;">
-              <p class="title is-5">25% &middot; 22%</p>
-              <p class="subtitle is-6">Perception Failure</p>
-              <p class="is-size-7">Picks the wrong object, either a look-alike or a plainly different one &mdash; asked for the milk, it takes the can.</p>
-            </div>
-          </div>
-          <div class="column is-3">
-            <div class="notification is-link is-light" style="height: 100%;">
-              <p class="title is-5">5% &middot; 6%</p>
-              <p class="subtitle is-6">Multi-step Planning</p>
-              <p class="is-size-7">The first sub-goal succeeds and the second is abandoned.</p>
-            </div>
-          </div>
-        </div>
-        <p class="is-size-7 has-text-grey" style="margin-bottom: 1.25rem;">Share of failing instructions per mode, OpenVLA-OFT &middot; &pi;<sub>0.5</sub>.</p>
-
-        <div class="notification is-info" style="margin-bottom: 1.5rem;">
-          <strong>The operational boundary.</strong> The distribution is nearly identical across the two architectures, and only execution misalignment keeps the right target and plan, which is what a magnitude correction assumes. A magnitude bias reaches execution misalignment and nothing else, because the other modes lack a target or a plan, not a magnitude. Read the other way, it says what a robot should ask a person for: a magnitude in one mode, a target or a plan in the others.
-        </div>
-
-        <!-- Taxonomy figure -->
-        <div class="has-text-centered">
-          <img src="./static/images/taxonomy_comparison.png" alt="Failure taxonomy" style="max-width: 100%; border-radius: 6px;" loading="lazy">
-          <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
-            <strong>Failure taxonomy.</strong> One rollout per mode for each model; the outlined frame is the key failure point.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Method                                                                 -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Human Correction: A Minimal Signal for the Correctable Mode</h2>
-        <div class="content has-text-justified">
-          <p>
-            A frozen policy &pi;<sub>&theta;</sub> outputs 7-D actions (x, y, z, roll, pitch, yaw, gripper). A rollout fails; a person watches it once and writes <em>K</em> sentences, <em>K</em> small. We seek a bias &delta; such that re-executing with <em>a</em><sub>t</sub> + &delta;<sub>t</sub> succeeds &mdash; with the weights frozen, no new data, and the same &delta; reused for every later rollout of the task. &ldquo;Move left more in 1 to 2 seconds&rdquo; becomes (y, &minus;1, more, [1.0, 2.0]). That is the whole of what the person supplies: explicit, retrospective, expressed in the policy&rsquo;s action space rather than as a goal or preference, sparse (one or two sentences for most tasks, never more than five), and located in time.
-          </p>
-        </div>
-
-        <!-- Correction examples figure -->
-        <div class="has-text-centered" style="margin-bottom: 1.5rem;">
-          <img src="./static/images/correction_comparison.png" alt="One sentence per task" style="max-width: 100%; border-radius: 6px;" loading="lazy">
-          <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
-            <strong>One sentence per task.</strong> Failure (red), the correction, success (green). Top: &ldquo;down little, 2.0&ndash;2.3 s&rdquo; recovers a missed bowl grasp. Bottom: &ldquo;left slightly&rdquo; and &ldquo;down slightly, 0.0&ndash;0.5 s&rdquo; recover a drawer that was never opened.
-          </p>
-        </div>
-
-        <div class="columns is-multiline" style="margin-top: 1.5rem;">
-          <div class="column is-one-third">
-            <div class="box" style="height: 100%;">
-              <h4 class="title is-5">Grounding</h4>
-              <p class="is-size-6">Each sentence is grounded by GPT-5 mini into a 4-tuple: <strong>action dimension</strong> (x/y/z/roll/pitch/yaw/grip), <strong>sign</strong> (&plusmn;1), <strong>magnitude term</strong>, and <strong>time window</strong> [t<sub>start</sub>, t<sub>end</sub>].</p>
-            </div>
-          </div>
-          <div class="column is-one-third">
-            <div class="box" style="height: 100%;">
-              <h4 class="title is-5">Magnitude</h4>
-              <p class="is-size-6">The term maps to a signed weight from fixed ranges &mdash; <em>slightly</em> [0.3, 0.5], <em>more</em> [0.5, 0.8], <em>much</em> [0.8, 1.0] &mdash; set on held-out corrections before evaluation. The person never types a number.</p>
-            </div>
-          </div>
-          <div class="column is-one-third">
-            <div class="box" style="height: 100%;">
-              <h4 class="title is-5">Timing</h4>
-              <p class="is-size-6">A piecewise-linear envelope rises from 0 at t<sub>start</sub> to 1 at the window midpoint and back to 0 at t<sub>end</sub>. Corrections on the same dimension superpose and are added to the policy&rsquo;s action.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="content has-text-justified" style="margin-top: 1rem;">
-          <p>
-            <strong>Action-space adaptation.</strong> Corrections are specified in Cartesian space to match how people speak (&ldquo;move left,&rdquo; &ldquo;move up&rdquo;). The real xArm7 runs under joint-velocity control, so a Cartesian correction is mapped to joint velocities through the Jacobian pseudoinverse &mdash; the minimum-norm joint velocity that realizes the requested end-effector motion.
-          </p>
-          <p>
-            <strong>What the signal assumes.</strong> (A1) The policy has the right target and plan; only how far or how hard is wrong. (A2) A few biases turn the near-miss into a success. (A3) One viewing shows a person which dimension drifted and when. The taxonomy measures A1; the experiments below test A2 and A3.
-          </p>
-        </div>
-
-        <!-- Correction timeline figure -->
-        <div class="has-text-centered" style="margin-top: 1.5rem;">
-          <img src="./static/images/correction_timeline.jpg" alt="One correction, then the policy on its own" style="max-width: 100%; border-radius: 6px;" loading="lazy">
-          <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
-            <strong>One correction, then the policy on its own.</strong> &pi;<sub>0.5</sub>; failed rollout above, corrected below, at the same times, plus each run&rsquo;s final frame; orange is the human&rsquo;s window. Top: LIBERO-90 (out of distribution), &ldquo;put the black bowl in the top drawer&rdquo;, correction &ldquo;down, more, 0.0&ndash;0.5 s&rdquo;; uncorrected, the policy hovers above the bowl for all 13 s. Bottom: LIBERO-10 (in distribution), &ldquo;put the yellow and white mug in the microwave and close it&rdquo;, correction &ldquo;forward a little, down a little, 2.6&ndash;2.8 s&rdquo;.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Simulation Results                                                     -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section" style="background-color: #fafafa;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Does the Signal Suffice? Simulation</h2>
-        <div class="content has-text-justified">
-          <p>
-            Simulation uses LIBERO with the <code>lerobot/pi05_libero_finetuned</code> checkpoint of &pi;<sub>0.5</sub>. We compare the base policy; a <em>VLM baseline</em> (GPT-5 mini, naive prompting) that watches the failure video and writes the same 4-tuple with no human input; and CorrectVLA, where a person writes one task-level correction reused across all rollouts. Corrections are applied only to execution-misalignment tasks. The base policy runs first and the correction is re-executed on its failed episodes only, so success counts add recovered failures to base successes. We run 50 trials on each of the 40 LIBERO tasks in distribution and 5 trials on each of the 90 LIBERO-90 tasks out of distribution.
-          </p>
-        </div>
-
-        <h3 class="title is-4">Table 1: Simulation</h3>
-        <div class="table-container">
-          <table class="table is-striped is-hoverable is-fullwidth">
-            <thead>
-              <tr>
-                <th>Setting</th>
-                <th>Metric</th>
-                <th>Base &pi;<sub>0.5</sub></th>
-                <th>VLM baseline</th>
-                <th><strong>CorrectVLA</strong></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td rowspan="2"><strong>In-distribution</strong></td>
-                <td>Success</td>
-                <td>1861/2000 (93.0%)</td>
-                <td>&mdash;</td>
-                <td><strong>1926/2000 (96.3%)</strong></td>
-              </tr>
-              <tr>
-                <td>Failures recovered</td>
-                <td>0</td>
-                <td>0</td>
-                <td><strong>65/139 (46.8%)</strong></td>
-              </tr>
-              <tr>
-                <td rowspan="2"><strong>Out-of-distribution</strong></td>
-                <td>Success</td>
-                <td>122/450 (27.1%)</td>
-                <td>&mdash;</td>
-                <td><strong>155/450 (34.4%)</strong></td>
-              </tr>
-              <tr>
-                <td>Failures recovered</td>
-                <td>0</td>
-                <td>0</td>
-                <td><strong>33/328 (10.1%)</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="content has-text-justified">
-          <p>
-            Out of distribution, 64 of the 328 failures fall in the 13 tasks labelled execution misalignment. Corrections were written for four of those tasks, so the 10.1% recovery is a lower bound on what the channel reaches, and no failure in the other three modes was recovered, as the taxonomy predicts. Where a correction was written it usually sufficed: 9 of 10 failed episodes on <em>open the top drawer</em>, 9 of 10 on <em>put the black bowl in the top drawer</em>, and 5 of 5 on <em>put the black bowl on the plate</em>. The fourth task, <em>close the top drawer</em>, failed differently from episode to episode, and one sentence recovered only some of them.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Simulation Video Demonstrations                                        -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Simulation Demonstrations</h2>
-        <div class="content has-text-justified">
-          <p>Execution-misalignment failures and the same episodes re-executed with one task-level sentence. Left: base policy failure. Right: the frozen policy with the correction added as a bias.</p>
-        </div>
-
-        <!-- Tabs -->
-        <div class="tabs is-centered is-boxed is-medium" id="demo-tabs">
-          <ul>
-            <li class="is-active" data-tab="pi05-tab"><a>&#960;0.5 (Simulation)</a></li>
-            <li data-tab="oft-tab"><a>OpenVLA-OFT (Simulation)</a></li>
-          </ul>
-        </div>
-
-        <!-- ── pi0.5 Tab ────────────────────────────────────────────── -->
-        <div id="pi05-tab" class="tab-content">
-
-          <h4 class="title is-5">In-Distribution</h4>
-
-          <!-- pi0.5 Spatial -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick up the black bowl on the wooden cabinet and place it on the plate</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./static/videos/pi05/pi05_spatial_ep457_baseline_failure.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./static/videos/pi05/pi05_spatial_ep457_corrected_success.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- pi0.5 Goal -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Open the middle drawer of the cabinet</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./static/videos/pi05/pi05_goal_ep13_baseline_failure.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./static/videos/pi05/pi05_goal_ep13_corrected_success.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- pi0.5 Wine Bottle -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the wine bottle on the rack</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./static/videos/pi05/pi05_goal_ep477_baseline_failure.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./static/videos/pi05/pi05_goal_ep477_corrected_success.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- pi0.5 Bowl on Cabinet -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the bowl on top of the cabinet</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./static/videos/pi05/pi05_goal_ep210_baseline_failure.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./static/videos/pi05/pi05_goal_ep210_corrected_success.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- pi0.5 Mug in Microwave -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the yellow and white mug in the microwave and close it</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./static/videos/pi05/pi05_10_ep455_baseline_failure.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./static/videos/pi05/pi05_10_ep455_corrected_success.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <hr>
-          <h4 class="title is-5">Out-of-Distribution (LIBERO-90)</h4>
-
-          <!-- pi0.5 OOD: open top drawer -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Open the top drawer of the cabinet</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./static/videos/pi05/pi05_ood_open_drawer_ep40_baseline_failure.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./static/videos/pi05/pi05_ood_open_drawer_ep40_corrected_success.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- pi0.5 OOD: bowl in drawer -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the black bowl in the top drawer of the cabinet</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">&#960;0.5 (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./static/videos/pi05/pi05_ood_bowl_drawer_ep11_baseline_failure.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./static/videos/pi05/pi05_ood_bowl_drawer_ep13_corrected_success.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── OpenVLA-OFT Tab ──────────────────────────────────────── -->
-        <div id="oft-tab" class="tab-content" style="display: none;">
-
-          <!-- OFT Spatial -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick up the black bowl on the wooden cabinet and place it on the plate</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./our-case/libero_spatial/epi462_before_2025_11_25-14_50_40--openvla_oft--episode=1--success=False--task=pick_up_the_black_bowl_on_the_wooden_cabinet_and_p.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./our-case/libero_spatial/epi462_2025_11_25-14_52_04--openvla_oft--episode=1--success=True--task=pick_up_the_black_bowl_on_the_wooden_cabinet_and_p.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- OFT Object -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick up the BBQ sauce and place it in the basket</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./our-case/libero_object/epi181_before_2025_11_26-10_05_07--openvla_oft--episode=1--success=False--task=pick_up_the_bbq_sauce_and_place_it_in_the_basket.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./our-case/libero_object/epi181_2025_11_26-10_06_37--openvla_oft--episode=1--success=True--task=pick_up_the_bbq_sauce_and_place_it_in_the_basket.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- OFT Goal -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Open the middle drawer of the cabinet</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./our-case/libero_goal/epi39_before_2025_11_26-10_14_57--openvla_oft--episode=1--success=False--task=open_the_middle_drawer_of_the_cabinet.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./our-case/libero_goal/epi39_2025_11_26-10_16_54--openvla_oft--episode=1--success=True--task=open_the_middle_drawer_of_the_cabinet.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- OFT Wine Bottle -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the wine bottle on the rack</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./our-case/libero_goal/epi459_before_2025_11_26-10_40_12--openvla_oft--episode=1--success=False--task=put_the_wine_bottle_on_the_rack.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./our-case/libero_goal/epi459_2025_11_26-10_45_47--openvla_oft--episode=1--success=True--task=put_the_wine_bottle_on_the_rack.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- OFT Tomato Sauce -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Pick up the tomato sauce and place it in the basket</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./our-case/libero_object/epi268_before_2025_11_26-10_12_04--openvla_oft--episode=1--success=False--task=pick_up_the_tomato_sauce_and_place_it_in_the_baske.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./our-case/libero_object/epi268_2025_11_26-10_13_40--openvla_oft--episode=1--success=True--task=pick_up_the_tomato_sauce_and_place_it_in_the_baske.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- OFT LIBERO-10 -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put the yellow and white mug in the microwave and close it</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./our-case/libero_10/epi462_before_2025_11_26-13_25_17--openvla_oft--episode=1--success=False--task=put_the_yellow_and_white_mug_in_the_microwave_and_.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./our-case/libero_10/epi462_2025_11_26-13_34_10--openvla_oft--episode=1--success=True--task=put_the_yellow_and_white_mug_in_the_microwave_and_.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-          <!-- OFT Moka Pots -->
-          <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Put both moka pots on the stove</p>
-          <div class="columns">
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-danger">OpenVLA-OFT (Failure)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #e74c3c;">
-                <source src="./our-case/libero_10/epi409_before_2025_11_26-11_57_02--openvla_oft--episode=1--success=False--task=put_both_moka_pots_on_the_stove.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-half">
-              <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-              <video controls playsinline muted width="100%" style="border-radius: 6px; border: 2px solid #27ae60;">
-                <source src="./our-case/libero_10/epi409_2025_11_26-12_02_27--openvla_oft--episode=1--success=True--task=put_both_moka_pots_on_the_stove.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Real-Robot Results                                                     -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section" style="background-color: #fafafa;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Does the Signal Suffice? Real Robot</h2>
-        <div class="content has-text-justified">
-          <p>
-            Real-robot experiments use a UFactory xArm7 with a Robotiq 2F-85 gripper and RealSense cameras. &pi;<sub>0.5</sub>-DROID was fine-tuned in one workspace, where it reached 95.0% on pick-and-place across 20 trials. We then moved the robot base, shifting camera viewpoint and workspace geometry, and ran each condition three times with 10 trials each.
-          </p>
-        </div>
-
-        <!-- Real robot figure -->
-        <div class="has-text-centered" style="margin-bottom: 1.5rem;">
-          <img src="./static/images/real_robot_comparison.png" alt="Real robot: failure and corrected success" style="max-width: 100%; border-radius: 6px;" loading="lazy">
-          <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
-            <strong>Real robot.</strong> After the shift &pi;<sub>0.5</sub> misses both grasps (red); one task-level correction restores success (green).
-          </p>
-        </div>
-
-        <h3 class="title is-4">Table 2: Real Robot (xArm7) after Moving the Base</h3>
-        <div class="table-container">
-          <table class="table is-striped is-hoverable is-fullwidth rr-table">
-            <thead>
-              <tr>
-                <th rowspan="2">Condition</th>
-                <th colspan="3" class="has-text-centered">Base &pi;<sub>0.5</sub>-DROID</th>
-                <th colspan="3" class="has-text-centered">CorrectVLA</th>
-              </tr>
-              <tr>
-                <th>Run 1</th><th>Run 2</th><th>Run 3</th>
-                <th>Run 1</th><th>Run 2</th><th>Run 3</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Environment shift only</td>
-                <td>1/10</td><td>9/10</td><td>0/10</td>
-                <td><strong>10/10</strong></td><td><strong>10/10</strong></td><td><strong>10/10</strong></td>
-              </tr>
-              <tr>
-                <td>Object moved</td>
-                <td>0/10</td><td>10/10</td><td>0/10</td>
-                <td><strong>10/10</strong></td><td><strong>10/10</strong></td><td><strong>10/10</strong></td>
-              </tr>
-              <tr>
-                <td>Object and location changed</td>
-                <td>2/10</td><td>0/10</td><td>0/10</td>
-                <td><strong>8/10</strong></td><td><strong>9/10</strong></td><td><strong>7/10</strong></td>
-              </tr>
-              <tr>
-                <td><em>Human engagement per run</em></td>
-                <td>0 s</td><td>0 s</td><td>0 s</td>
-                <td>40&ndash;80 s</td><td>40&ndash;80 s</td><td>40&ndash;80 s</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="content has-text-justified">
-          <p>
-            The base policy was position-sensitive. In the one run per condition where the object happened to fall inside the fine-tuning distribution it scored 9/10 or 10/10; elsewhere 0/10 to 2/10, every failure a missed grasp. One task-level correction per task, not rewritten between runs, lifts every run to 10/10 with the same object and to 7/10&ndash;9/10 with a new object.
-          </p>
-          <div class="notification is-warning is-light">
-            <strong>The other side of the boundary.</strong> Two long-horizon tasks, folding a shirt (92.5% before the shift) and stacking boxes, fail in all 30 trials after the shift, with and without correction: outside execution misalignment, the sentence has nothing to reach.
+          <div class="gallery__controls">
+            <button type="button" class="ctl" data-act="toggle" aria-label="Pause">
+              <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg>
+              <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button type="button" class="ctl" data-act="restart" aria-label="Restart both">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
+            </button>
+            <p class="gallery__correction" hidden></p>
           </div>
         </div>
       </div>
@@ -675,154 +432,90 @@
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Real-Robot Video Demonstrations                                        -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Real-Robot Demonstrations</h2>
-        <div class="content has-text-justified">
-          <p>After the robot base is moved, &pi;<sub>0.5</sub>-DROID misses the grasp. One sentence per task, written once and not rewritten between runs, restores it.</p>
-        </div>
+<!-- ═══ What does the human supply? ════════════════════════════════════ -->
+<section class="band" id="human">
+  <div class="wrap">
+    <p class="kicker">What does the human supply?</p>
+    <h2 class="statement">Same video, same format &mdash; only the person recovers anything.</h2>
 
-        <!-- Pick-and-place left -->
-        <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Environment shift only</p>
-        <div class="rr-pair">
-          <div class="rr-item">
-            <p class="has-text-centered has-text-weight-bold has-text-danger">&pi;0.5 (Failure)</p>
-            <video controls playsinline muted style="border: 2px solid #e74c3c;">
-              <source src="./static/videos/real-robot/pi05_failure_left.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="rr-item">
-            <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-            <video controls playsinline muted style="border: 2px solid #27ae60;">
-              <source src="./static/videos/real-robot/ours_success_left.mp4" type="video/mp4">
-            </video>
-          </div>
-        </div>
+    <div class="versus">
+      <article class="versus__side is-person">
+        <p class="versus__who">A person</p>
+        <p class="versus__how">Watches the failure once and writes the 4-tuple in words.</p>
+        <dl>
+          <div><dt>In-distribution failures recovered</dt><dd>65 <span>/ 139</span></dd></div>
+          <div><dt>Out-of-distribution failures recovered</dt><dd>33 <span>/ 328</span></dd></div>
+        </dl>
+      </article>
+      <article class="versus__side">
+        <p class="versus__who">GPT-5 mini, naively prompted</p>
+        <p class="versus__how">Sees the same failure video and writes the same 4-tuple.</p>
+        <dl>
+          <div><dt>In-distribution failures recovered</dt><dd>0 <span>/ 139</span></dd></div>
+          <div><dt>Out-of-distribution failures recovered</dt><dd>0 <span>/ 328</span></dd></div>
+        </dl>
+      </article>
+    </div>
 
-        <!-- Pick-and-place right (different location) -->
-        <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Object moved</p>
-        <div class="rr-pair">
-          <div class="rr-item">
-            <p class="has-text-centered has-text-weight-bold has-text-danger">&pi;0.5 (Failure)</p>
-            <video controls playsinline muted style="border: 2px solid #e74c3c;">
-              <source src="./static/videos/real-robot/pi05_failure_left2.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="rr-item">
-            <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-            <video controls playsinline muted style="border: 2px solid #27ae60;">
-              <source src="./static/videos/real-robot/ours_success_right.mp4" type="video/mp4">
-            </video>
-          </div>
-        </div>
-
-        <!-- Pick-and-place cube (different object + location) -->
-        <p class="subtitle is-6" style="margin-bottom: 0.5rem;">Object and location changed</p>
-        <div class="rr-pair">
-          <div class="rr-item">
-            <p class="has-text-centered has-text-weight-bold has-text-danger">&pi;0.5 (Failure)</p>
-            <video controls playsinline muted style="border: 2px solid #e74c3c;">
-              <source src="./static/videos/real-robot/pi05_failure_cube.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="rr-item">
-            <p class="has-text-centered has-text-weight-bold has-text-success">CorrectVLA (Success)</p>
-            <video controls playsinline muted style="border: 2px solid #27ae60;">
-              <source src="./static/videos/real-robot/ours_success_cube.mp4" type="video/mp4">
-            </video>
-          </div>
-        </div>
-      </div>
+    <div class="prose">
+      <p>For this channel, feedback from a foundation model cannot yet replace feedback from a person. The value lies in two judgments the person makes from one viewing and the VLM did not: <b>how large the miss was</b> in the robot&rsquo;s action units, and <b>when it happened</b>.</p>
+      <p>Most corrected tasks succeeded with the first correction; second rounds only adjusted the magnitude term. The person&rsquo;s intervention was mainly timing: a window of a few tenths of a second around the missed contact.</p>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- What Does the Human Supply?                                            -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section" style="background-color: #fafafa;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">What Does the Human Supply?</h2>
-        <div class="content has-text-justified">
-          <p>
-            Can feedback from a foundation model replace feedback from a person? For this channel, not yet. The VLM baseline isolates the question: it sees the same failure video, writes the same 4-tuple, and recovers nothing. The value lies in two judgments the person makes from one viewing and the VLM did not: how large the miss was in the robot&rsquo;s action units, and when it happened.
-          </p>
-          <p>
-            Most corrected tasks succeeded with the first correction; second rounds only adjusted the magnitude term. The person&rsquo;s intervention was mainly timing: a window of a few tenths of a second around the missed contact.
-          </p>
-        </div>
+<!-- ═══ Discussion, limitations, conclusion ════════════════════════════ -->
+<section class="band band--plane" id="discussion">
+  <div class="wrap">
+    <p class="kicker">Discussion</p>
+    <h2 class="statement">A channel that is not retained.</h2>
+
+    <div class="twocol">
+      <div class="note-card">
+        <h3>The channel is misspecified for the failures that dominate</h3>
+        <p>Over 70% of failing out-of-distribution tasks lack a target or a plan, and an additive bias cannot say &ldquo;the other bowl&rdquo; nor fold a shirt. The channel cannot represent what the person means, so no feedback converges. These are the modes where foundation models generalize well.</p>
       </div>
+      <div class="note-card">
+        <h3>Nothing is learned</h3>
+        <p>The correction is written by a person and replayed as given; every new shift or task needs a new sentence. The open problem is <em>intent propagation</em>: can a policy retain what a correction expresses and generalize it beyond the situation in which it was said?</p>
+      </div>
+    </div>
+
+    <div class="prose">
+      <h3 class="h-plain">Limitations</h3>
+      <ul class="limits">
+        <li>The taxonomy was labelled by one annotator.</li>
+        <li>A task-level correction assumes one failure pattern per task.</li>
+        <li>The corrections were written by the authors; there is no user study.</li>
+        <li>Corrections are language only, with no multimodal feedback or depth sensing.</li>
+        <li>The bias was not applied to episodes the base policy already completed.</li>
+      </ul>
+
+      <h3 class="h-plain">Conclusion</h3>
+      <p>A generalist VLA under distribution shift fails in four ways, and only execution misalignment leaves the target and the plan intact. For that mode the smallest correction a person can give, one retrospective sentence per task, is enough: added as a bias to the frozen policy, it recovers failures in simulation and on a real robot after an environment shift, and a foundation model given the same video does not supply what the person did. Two lessons follow:</p>
+    </div>
+
+    <div class="lessons">
+      <p><span>1</span>Diagnose the mode before choosing the channel.</p>
+      <p><span>2</span>Treat the sentence as information a policy should keep &mdash; today it is replayed, never learned.</p>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Discussion                                                             -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Discussion: A Channel That Is Not Retained</h2>
-        <div class="content has-text-justified">
-          <h4 class="title is-5">The channel is misspecified for the failures that dominate</h4>
-          <p>
-            Over 70% of failing out-of-distribution tasks lack a target or a plan, and an additive bias cannot say &ldquo;the other bowl&rdquo; nor fold a shirt. The channel cannot represent what the person means, so no feedback converges. These are the modes where foundation models generalize well.
-          </p>
-          <h4 class="title is-5">Nothing is learned</h4>
-          <p>
-            The correction is written by a person and replayed as given; every new shift or task needs a new sentence. The open problem is <em>intent propagation</em>: can a policy retain what a correction expresses and generalize it beyond the situation in which it was said?
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+</main>
 
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Limitations and Conclusion                                             -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<section class="section" style="background-color: #fafafa;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Limitations and Conclusion</h2>
-        <div class="content has-text-justified">
-          <p>
-            <strong>Limitations.</strong> The taxonomy was labelled by one annotator; a task-level correction assumes one failure pattern per task; the corrections were written by the authors; there is no user study; corrections are language only, with no multimodal feedback or depth sensing; and the bias was not applied to episodes the base policy already completed.
-          </p>
-          <p>
-            <strong>Conclusion.</strong> A generalist VLA under distribution shift fails in four ways, and only execution misalignment leaves the target and the plan intact. For that mode the smallest correction a person can give, one retrospective sentence per task, is enough: added as a bias to the frozen policy, it recovers failures in simulation and on a real robot after an environment shift, and a foundation model given the same video does not supply what the person did. Two lessons follow: diagnose the mode before choosing the channel, and treat the sentence as information a policy should keep &mdash; today it is replayed, never learned.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- Footer                                                                 -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
 <footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content has-text-centered">
-          <p>
-            This website template is adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
-          </p>
-        </div>
-      </div>
-    </div>
+  <div class="wrap">
+    <p>Anonymous Author(s) &middot; Under review</p>
+    <p>Originally adapted from the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> project page template.</p>
   </div>
 </footer>
+
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged figure">
+  <img alt="">
+  <button type="button" class="lightbox__close" aria-label="Close">&times;</button>
+</dialog>
+<div class="tip" id="tip" role="tooltip" hidden></div>
 
 </body>
 </html>
