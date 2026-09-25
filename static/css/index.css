@@ -79,19 +79,6 @@ video {
   border-radius: 8px;
 }
 
-/* ── Overview video ──────────────────────────────────────────────────── */
-.cv-overview-video {
-  width: 100%;
-  max-width: 880px;
-  aspect-ratio: 16 / 9;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  background: #000;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
-}
-
 /* ── Real-robot demos ────────────────────────────────────────────────── */
 /* Clips vary in source aspect (one is 1280x720, the rest 406x720), so a
    fixed portrait box keeps every pair the same size. */
@@ -167,7 +154,15 @@ video {
   line-height: 1.12;
   font-weight: 700;
   letter-spacing: -0.015em;
-  margin: 0 0 1.5rem;
+  margin: 0 0 .75rem;
+}
+
+.cv-subtitle {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  line-height: 1.35;
+  color: #c9d4df;
+  margin-bottom: 1.5rem;
 }
 
 .cv-authors {
