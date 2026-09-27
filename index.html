@@ -8,7 +8,7 @@
   <meta name="keywords" content="VLA, Vision-Language-Action, Learning from Corrections, Failure Taxonomy, Robot Learning, LIBERO">
   <meta property="og:title" content="What Can One Sentence Fix?">
   <meta property="og:description" content="A failure taxonomy and a minimal language correction for frozen VLA policies.">
-  <meta property="og:image" content="https://correctvla.github.io/static/images/correction_comparison.png">
+  <meta property="og:image" content="https://correctvla.github.io/static/images/overview.jpg">
   <meta name="theme-color" content="#0f1419">
   <link rel="icon" href="./static/images/favicon.svg" type="image/svg+xml">
 
@@ -72,7 +72,7 @@
       </figure>
     </div>
   </div>
-  <p class="hero__note">One sentence per task, written once after a failed rollout and replayed on every later rollout &mdash; the frozen policy does the rest.</p>
+  <p class="hero__note">One sentence per task, written once after a failed rollout and replayed on every later rollout. The frozen policy does the rest.</p>
 </header>
 
 <main id="main">
@@ -80,36 +80,44 @@
 <!-- ═══ Overview: four findings + abstract ═════════════════════════════ -->
 <section class="band band--plane" id="overview">
   <div class="wrap">
-    <p class="kicker">Four findings</p>
-    <h2 class="statement">A sentence can fix a miscalibrated magnitude &mdash; and nothing else.</h2>
+    <p class="kicker">Overview</p>
+    <h2 class="statement">One sentence can fix a miscalibrated magnitude.</h2>
 
+    <figure class="paper-fig overview-fig">
+      <button class="zoom" type="button" aria-label="Enlarge overview figure">
+        <img src="./static/images/overview.jpg" alt="Overview. The frozen pi0.5 gets stuck at the top drawer; the failure is diagnosed as execution misalignment; the person says 'Down more, 0 to 0.5 s', which an LLM grounds into (z, -1, more, [0, 0.5] s) and adds as a short bias to the policy's actions; the policy then finishes, and later rollouts reuse the same sentence." width="2400" height="974">
+      </button>
+      <figcaption><b>Overview.</b> The frozen &pi;<sub>0.5</sub> gets stuck at the top drawer and cannot recover (1), an execution misalignment (2). One sentence becomes a short bias &delta; (3); the policy finishes, and later rollouts reuse it (4). Orange marks what the person supplies; paths and actions are schematic. Click to enlarge.</figcaption>
+    </figure>
+
+    <h3 class="subhead">Four findings</h3>
     <div class="findings">
       <article class="finding">
         <p class="finding__value">23% <span>&middot;</span> 22%</p>
         <p class="finding__label">of failing instructions are execution misalignment (OpenVLA-OFT &middot; &pi;<sub>0.5</sub>)</p>
         <h3>A failure taxonomy that is stable across architectures</h3>
-        <p>On 133 failing instructions, both policies fail in the same four ways in nearly the same proportions, and only execution misalignment keeps the task structure intact.</p>
+        <p>On 133 failing instruction&ndash;model pairs, both policies fail in the same four ways in nearly the same proportions, and execution misalignment is the one mode that keeps the task structure intact.</p>
         <a class="more" href="#taxonomy">Taxonomy</a>
       </article>
       <article class="finding">
         <p class="finding__value">65<span>/</span>139</p>
-        <p class="finding__label">in-distribution failures recovered in simulation (and 33 / 328 out of distribution)</p>
+        <p class="finding__label">in-distribution failures recovered in simulation (and 33&nbsp;/&nbsp;328 out of distribution)</p>
         <h3>The task, not the episode, as the unit of correction</h3>
-        <p>One retrospective sentence per task, added as a bias, is reused on every failed rollout and every real-robot run.</p>
+        <p>One retrospective sentence per task, added as a bias, is reused on every failed rollout in simulation and every trial of a robot run.</p>
         <a class="more" href="#method">Method</a>
       </article>
       <article class="finding">
         <p class="finding__value">30<span>/</span>30</p>
-        <p class="finding__label">same-object pick-and-place after moving the robot base (from 10 / 30) &mdash; long-horizon tasks stay at 0 / 30</p>
+        <p class="finding__label">same-object pick-and-place after moving the robot base (from 10&nbsp;/&nbsp;30); long-horizon tasks stay at 0&nbsp;/&nbsp;30</p>
         <h3>The boundary holds on hardware from both sides</h3>
-        <p>After an environment shift, one sentence lifts pick-and-place to 10/10 per run with the same object, but advanced tasks stay at 0/30.</p>
+        <p>After an environment shift, one sentence lifts pick-and-place to 10/10 per run with the same object, but two long-horizon tasks stay at 0/30.</p>
         <a class="more" href="#real-robot">Real robot</a>
       </article>
       <article class="finding">
-        <p class="finding__value">0</p>
-        <p class="finding__label">failures recovered when GPT-5 mini writes the same correction from the same video</p>
+        <p class="finding__value">65 <em>vs</em> 0</p>
+        <p class="finding__label">in-distribution failures recovered by a person&rsquo;s sentence vs GPT-5 mini&rsquo;s, from the same video</p>
         <h3>The information is in the person</h3>
-        <p>What the person supplies is calibrated timing and magnitude &mdash; not language itself.</p>
+        <p>What the person supplies is calibrated magnitude and timing, not language itself.</p>
         <a class="more" href="#human">What the human supplies</a>
       </article>
     </div>
@@ -117,8 +125,8 @@
     <div class="prose abstract">
       <h2 class="h-plain">Abstract</h2>
       <p>When a deployed vision-language-action (VLA) policy fails, the person watching it can usually say what went wrong in one sentence. We ask what such a sentence can and cannot fix. We label every failing LIBERO-90 task (out of distribution) for two policies, OpenVLA-OFT and &pi;<sub>0.5</sub>, and find that the failures sort into four modes. One of them, <em>execution misalignment</em>, is the one a single sentence can reach, where the policy reaches the right target but miscalibrates how far or how hard to move, and the other three lack a target or a plan, not a magnitude.</p>
-      <p>For the correctable mode we define the narrowest human correction that can reach it: one retrospective sentence per task, grounded by an LLM into an action dimension, direction, magnitude term, and time window, and added as a bias to the frozen policy&rsquo;s actions. Re-executed on every failed rollout, it recovers 65 of 139 in-distribution and 33 of 328 out-of-distribution failures in simulation. On a real xArm7 after the robot base is moved, one sentence per task raises pick-and-place from 10/30 to 30/30 in each of two same-object conditions and from 2/30 to 24/30 with a new object, while two long-horizon tasks stay at 0/30 with and without correction, as the taxonomy predicts.</p>
-      <p>A naively prompted VLM given the same failure video fails to recover a single case: the value of the correction is the person&rsquo;s calibrated sense of magnitude and timing, not language itself. A correction touches less than a second of a trajectory, not the whole of it: because a policy&rsquo;s miscalibration recurs across episodes, fixing that one moment once lets the policy complete the rest with its own reasoning, episode after episode.</p>
+      <p>For the correctable mode we define the narrowest human correction that can reach it: one retrospective sentence per task, grounded by an LLM into an action dimension, direction, magnitude term, and time window, and added as a bias to the frozen policy&rsquo;s actions. Re-executed on every failed rollout, it recovers 65 of 139 in-distribution and 33 of 328 out-of-distribution failures in simulation. On a real xArm7 after the robot base is moved, one sentence per run raises pick-and-place from 10/30 to 30/30 in each of two same-object conditions and from 2/30 to 24/30 with a new object, while two long-horizon tasks stay at 0/30 with and without correction, as the taxonomy predicts.</p>
+      <p>A naively prompted VLM that watches the same failures and writes the same kind of correction recovers none, suggesting that the value lies in the person&rsquo;s calibrated sense of magnitude and timing rather than in language itself. A correction touches less than a second of a trajectory, not the whole of it: because a policy&rsquo;s miscalibration recurs across episodes, fixing that one moment once lets the policy complete the rest on its own, episode after episode.</p>
     </div>
   </div>
 </section>
@@ -127,9 +135,9 @@
 <section class="band" id="taxonomy">
   <div class="wrap">
     <p class="kicker">Failure taxonomy &amp; correctability</p>
-    <h2 class="statement">Four ways to fail. Only one keeps the target and the plan.</h2>
+    <h2 class="statement">Four failure modes, and one a sentence can fix.</h2>
     <div class="prose">
-      <p>We ran OpenVLA-OFT and &pi;<sub>0.5</sub>, both fine-tuned on the same 40 LIBERO tasks, on all 90 LIBERO-90 tasks &mdash; out of distribution in their instructions, not their scenes. Every instruction with at least one failed rollout was labelled with its key failure frame and one of four modes: 73 instructions for OpenVLA-OFT and 60 for &pi;<sub>0.5</sub> (holding all 328 of its failed rollouts), 133 instruction&ndash;model pairs in all.</p>
+      <p>We ran OpenVLA-OFT and &pi;<sub>0.5</sub>, both fine-tuned on the same 40 LIBERO tasks, on all 90 LIBERO-90 tasks, which are out of distribution in their instructions, not their scenes. Every instruction with at least one failed rollout was labelled with its key failure frame and one of four modes: 73 of the 74 instructions for OpenVLA-OFT and 60 for &pi;<sub>0.5</sub> (the other 14 always succeeded), 133 instruction&ndash;model pairs in all.</p>
     </div>
 
     <figure class="chart-card">
@@ -138,10 +146,10 @@
         <span>133 instruction&ndash;model pairs, LIBERO-90</span>
       </figcaption>
       <div class="legend">
-        <span><i class="sw sw--accent"></i>Execution misalignment &mdash; a sentence can reach it</span>
-        <span><i class="sw sw--neutral"></i>Lacks a target or a plan</span>
+        <span><i class="sw sw--accent"></i>Execution misalignment: a sentence can reach it</span>
+        <span><i class="sw sw--neutral"></i>Needs a target or a plan instead</span>
       </div>
-      <div id="chart-taxonomy" class="taxbars" role="img" aria-label="Execution misalignment is 23% of OpenVLA-OFT and 22% of pi0.5 failing instructions; task misunderstanding 47% and 50%; perception failure 25% and 22%; multi-step planning 5% and 6%."></div>
+      <div id="chart-taxonomy" class="taxbars" role="img" aria-label="Execution misalignment is 23% of OpenVLA-OFT and 22% of pi0.5 failing instructions; task misunderstanding 47% and 50%; perception failure 25% and 22%; multi-step planning 5% and 7%."></div>
       <details class="table-view">
         <summary>Table view</summary>
         <table>
@@ -150,7 +158,7 @@
             <tr><td>Execution misalignment</td><td>23%</td><td>22%</td></tr>
             <tr><td>Task misunderstanding</td><td>47%</td><td>50%</td></tr>
             <tr><td>Perception failure</td><td>25%</td><td>22%</td></tr>
-            <tr><td>Multi-step planning</td><td>5%</td><td>6%</td></tr>
+            <tr><td>Multi-step planning</td><td>5%</td><td>7%</td></tr>
           </tbody>
         </table>
       </details>
@@ -159,39 +167,56 @@
     <div class="modes">
       <article class="mode is-reachable">
         <header><h3>Execution misalignment</h3><span class="share">23% &middot; 22%</span></header>
-        <p>The right target is reached, but how far or how hard is miscalibrated &mdash; a grasp a few centimeters shallow, a push a little weak.</p>
-        <p class="mode__eg"><q>close the top drawer</q> &rarr; drawer still open</p>
-        <p class="ask">Ask a person for <b>a magnitude</b></p>
+        <p>The right target is reached, but how far or how hard is miscalibrated: a grasp a few centimeters shallow, a push a little weak.</p>
+        <dl class="eg">
+          <div><dt>Instruction</dt><dd><q>close the top drawer of the cabinet</q></dd></div>
+          <div><dt>Policy</dt><dd>reaches the drawer, leaves it open</dd></div>
+          <div class="is-right"><dt>&#10003; Correct</dt><dd>push shut</dd></div>
+        </dl>
+        <p class="ask">Ask a person for <b>a magnitude</b><span class="badge">One sentence reaches it</span></p>
       </article>
       <article class="mode">
         <header><h3>Task misunderstanding</h3><span class="share">47% &middot; 50%</span></header>
-        <p>A relative spatial reference is resolved in the image frame rather than the table frame.</p>
-        <p class="mode__eg"><q>the middle bowl</q> &rarr; the bowl in the middle of the image, not of the row</p>
+        <p>A relative spatial reference is resolved in the image frame rather than the table frame. The largest mode.</p>
+        <dl class="eg">
+          <div><dt>Instruction</dt><dd><q>put the middle black bowl on the plate</q></dd></div>
+          <div><dt>Policy</dt><dd>takes the bowl in the middle of the image</dd></div>
+          <div class="is-right"><dt>&#10003; Correct</dt><dd>the middle bowl of the row</dd></div>
+        </dl>
         <p class="ask">Ask a person for <b>a target</b></p>
       </article>
       <article class="mode">
         <header><h3>Perception failure</h3><span class="share">25% &middot; 22%</span></header>
-        <p>The policy picks the wrong object, either a look-alike or a plainly different one.</p>
-        <p class="mode__eg"><q>pick up the milk</q> &rarr; takes the can</p>
+        <p>The policy picks a different object, either a look-alike or a plainly different one.</p>
+        <dl class="eg">
+          <div><dt>Instruction</dt><dd><q>pick up the milk and put it in the basket</q></dd></div>
+          <div><dt>Policy</dt><dd>takes the can</dd></div>
+          <div class="is-right"><dt>&#10003; Correct</dt><dd>the milk</dd></div>
+        </dl>
         <p class="ask">Ask a person for <b>a target</b></p>
       </article>
       <article class="mode">
-        <header><h3>Multi-step planning</h3><span class="share">5% &middot; 6%</span></header>
-        <p>The first sub-goal succeeds and the second is abandoned.</p>
-        <p class="mode__eg"><q>turn on stove + place pan</q> &rarr; pan never moved</p>
+        <header><h3>Multi-step planning</h3><span class="share">5% &middot; 7%</span></header>
+        <p>The first sub-goal succeeds, and the policy stops before the second.</p>
+        <dl class="eg">
+          <div><dt>Instruction</dt><dd><q>turn on the stove and put the frying pan on it</q></dd></div>
+          <div><dt>Policy</dt><dd>turns on the stove, stops before the pan</dd></div>
+          <div class="is-right"><dt>&#10003; Correct</dt><dd>pan onto the stove</dd></div>
+        </dl>
         <p class="ask">Ask a person for <b>a plan</b></p>
       </article>
     </div>
+    <p class="modes__note">Shares are OpenVLA-OFT &middot; &pi;<sub>0.5</sub>. A wrong object counts as task misunderstanding when the instruction names it by a relative reference, and as perception failure when it names it directly.</p>
 
     <div class="callout">
-      <p><strong>The operational boundary.</strong> A magnitude bias reaches execution misalignment and nothing else, because the other modes lack a target or a plan, not a magnitude. Read the other way, the taxonomy says what a robot should ask a person for: a magnitude in one mode, a target or a plan in the others.</p>
+      <p><strong>The operational boundary.</strong> A magnitude bias is the right tool for execution misalignment, where the target and the plan are already right; the other modes call for a target or a plan instead. The boundary follows from what the channel can express; the empirical questions are how often failures fall inside it and whether a sentence then suffices. Read the other way, it says what a robot should ask a person for: a magnitude in one mode, a target or a plan in the others.</p>
     </div>
 
     <figure class="paper-fig is-tall">
       <button class="zoom" type="button" aria-label="Enlarge failure taxonomy figure">
-        <img src="./static/images/taxonomy_comparison.png" alt="Failure taxonomy: one rollout per mode for OpenVLA-OFT and pi0.5, with the key failure frame outlined." loading="lazy" width="2195" height="1552">
+        <img src="./static/images/taxonomy.jpg" alt="Failure taxonomy: for each mode, one rollout per model with its instruction, the failure frame, and a check mark on the correct answer." loading="lazy" width="1800" height="1252">
       </button>
-      <figcaption><b>Failure taxonomy.</b> One rollout per mode for each model; the outlined frame is the key failure point. Click to enlarge.</figcaption>
+      <figcaption><b>Failure taxonomy.</b> One rollout per mode for each model, with its instruction. &#10003; marks the correct answer; orange marks the correctable mode. Click to enlarge.</figcaption>
     </figure>
   </div>
 </section>
@@ -202,20 +227,36 @@
     <p class="kicker">Human correction</p>
     <h2 class="statement">One sentence becomes a short bias on a frozen policy.</h2>
     <div class="prose">
-      <p>A frozen policy outputs 7-D actions (x, y, z, roll, pitch, yaw, gripper). A rollout fails; a person watches it once and writes a few sentences. We seek a bias that turns the near-miss into a success when added to the policy&rsquo;s actions &mdash; weights frozen, no new data, and the same bias reused for every later rollout of the task. The person never types a number.</p>
+      <p>A frozen policy outputs 7-D actions (x, y, z, roll, pitch, yaw, gripper). A rollout fails; a person watches it once and writes one sentence. We seek a bias that turns the near-miss into a success when added to the policy&rsquo;s actions, with weights frozen, no new data, and the same bias reused for every later rollout of the task. No numbers are needed from the person.</p>
     </div>
 
     <ol class="pipeline">
-      <li><span class="step">1</span><h3>Watch</h3><p>A person watches one failed rollout and writes one or two sentences for most tasks &mdash; never more than five.</p></li>
-      <li><span class="step">2</span><h3>Ground</h3><p>GPT-5 mini grounds each sentence into a 4-tuple: action dimension, sign, magnitude term, time window.</p></li>
-      <li><span class="step">3</span><h3>Shape</h3><p>The term sets a signed weight &mdash; <em>slightly</em> 0.3&ndash;0.5, <em>more</em> 0.5&ndash;0.8, <em>much</em> 0.8&ndash;1.0 &mdash; under an envelope that peaks mid-window.</p></li>
+      <li><span class="step">1</span><h3>Watch</h3><p>A person watches one failed rollout and writes one sentence, with one or two clauses for most tasks and at most five.</p></li>
+      <li><span class="step">2</span><h3>Ground</h3><p>GPT-5 mini grounds each clause into a 4-tuple: action dimension, sign, magnitude term, time window.</p></li>
+      <li><span class="step">3</span><h3>Shape</h3><p>The magnitude term picks a signed weight inside a fixed range of the controller&rsquo;s largest step, under an envelope that ramps up and back down inside the window.</p></li>
       <li><span class="step">4</span><h3>Replay</h3><p>The bias is added to the frozen policy&rsquo;s actions on every later rollout of the task.</p></li>
     </ol>
 
     <div class="grounding">
-      <q class="sentence">Move left more in 1 to 2 seconds</q>
+      <q class="sentence">Move down more in 1 to 2 seconds</q>
       <span class="arrow" aria-hidden="true">&rarr;</span>
-      <code class="tuple">(y, &minus;1, more, [1.0, 2.0])</code>
+      <code class="tuple">(z, &minus;1, more, [1.0, 2.0])</code>
+    </div>
+
+    <div class="note-card ranges">
+      <div>
+        <h3>Where the magnitude ranges come from</h3>
+        <p>Each term maps to a fixed fraction of the controller&rsquo;s largest step, and the grounder picks a weight inside it; words such as &ldquo;a little&rdquo; map to the nearest term. The ranges were set empirically from a few simulation trials. They depend on the robot and could be learned from comparative language feedback, a natural next step noted in the <a href="#limitations">limitations</a>.</p>
+      </div>
+      <div class="ranges__viz" role="img" aria-label="slightly: 0.3 to 0.5, more: 0.5 to 0.8, much: 0.8 to 1.0 of the controller's largest step.">
+        <div class="ranges__track">
+          <span class="r1" style="left: 30%; width: 20%;">slightly</span>
+          <span class="r2" style="left: 50%; width: 30%;">more</span>
+          <span class="r3" style="left: 80%; width: 20%;">much</span>
+        </div>
+        <div class="ranges__axis"><span style="left: 0%;">0</span><span style="left: 30%;">0.3</span><span style="left: 50%;">0.5</span><span style="left: 80%;">0.8</span><span style="left: 100%;">1.0</span></div>
+        <p class="ranges__unit">Fraction of the controller&rsquo;s largest step</p>
+      </div>
     </div>
 
     <!-- Interactive: where the correction sits in time -->
@@ -242,7 +283,7 @@
           </div>
           <div class="timeline__axis"></div>
           <div class="timeline__key">
-            <span><i class="sw sw--accent"></i>Human window &mdash; envelope &phi;(t)</span>
+            <span><i class="sw sw--accent"></i>Human window: envelope &phi;(t)</span>
             <span><i class="sw sw--wash"></i>Policy on its own</span>
           </div>
         </div>
@@ -257,32 +298,24 @@
     <div class="twocol">
       <div class="note-card">
         <h3>Action-space adaptation</h3>
-        <p>Corrections are specified in Cartesian space to match how people speak (&ldquo;move left,&rdquo; &ldquo;move up&rdquo;). The real xArm7 runs under joint-velocity control, so a Cartesian correction is mapped to joint velocities through the Jacobian pseudoinverse &mdash; the minimum-norm joint velocity that realizes the requested end-effector motion.</p>
+        <p>Corrections are specified in Cartesian space to match how people speak (&ldquo;move left,&rdquo; &ldquo;move up&rdquo;). The real xArm7 runs under joint-velocity control, so a Cartesian correction is mapped to joint velocities through the Jacobian pseudoinverse, the minimum-norm joint velocity that realizes the requested end-effector motion.</p>
       </div>
       <div class="note-card">
         <h3>What the signal assumes</h3>
         <ul class="assume">
-          <li><b>A1</b> The policy has the right target and plan; only how far or how hard is wrong. <a href="#taxonomy">Measured by the taxonomy</a></li>
+          <li><b>A1</b> The policy has the right target and plan; just how far or how hard needs adjusting. <a href="#taxonomy">Measured by the taxonomy</a></li>
           <li><b>A2</b> A few biases turn the near-miss into a success. <a href="#results">Tested in results</a></li>
           <li><b>A3</b> One viewing shows a person which dimension drifted and when. <a href="#human">Tested against a VLM</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="figpair">
-      <figure class="paper-fig">
-        <button class="zoom" type="button" aria-label="Enlarge correction examples figure">
-          <img src="./static/images/correction_comparison.png" alt="Failure, correction, and success for two LIBERO tasks." loading="lazy" width="2147" height="772">
-        </button>
-        <figcaption><b>One sentence per task.</b> Failure (red), the correction, success (green). Top: &ldquo;down little, 2.0&ndash;2.3 s&rdquo; recovers a missed bowl grasp. Bottom: &ldquo;left slightly&rdquo; and &ldquo;down slightly, 0.0&ndash;0.5 s&rdquo; recover a drawer that was never opened.</figcaption>
-      </figure>
-      <figure class="paper-fig">
-        <button class="zoom" type="button" aria-label="Enlarge correction timeline figure">
-          <img src="./static/images/correction_timeline.jpg" alt="Frames from a failed and a corrected rollout at the same times, with the human correction window marked in orange." loading="lazy" width="1600" height="1315">
-        </button>
-        <figcaption><b>One correction, then the policy on its own.</b> Failed rollout above, corrected below, at the same times; orange is the human&rsquo;s window.</figcaption>
-      </figure>
-    </div>
+    <figure class="paper-fig timeline-fig">
+      <button class="zoom" type="button" aria-label="Enlarge correction timeline figure">
+        <img src="./static/images/correction_timeline.jpg" alt="Frames from a failed and a corrected rollout at the same times, with the human correction window marked in orange." loading="lazy" width="1600" height="1315">
+      </button>
+      <figcaption><b>One correction, then the policy on its own.</b> Failed rollout above, corrected below, at the same times; orange is the human&rsquo;s window. Uncorrected, the top rollout stays stuck at the top drawer for all 13 s.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -292,9 +325,9 @@
     <p class="kicker">Does the signal suffice?</p>
     <h2 class="statement">Where the sentence reaches, it usually suffices.</h2>
 
-    <h3 class="subhead">Simulation &mdash; LIBERO, &pi;<sub>0.5</sub></h3>
+    <h3 class="subhead">Simulation: LIBERO, &pi;<sub>0.5</sub></h3>
     <div class="prose">
-      <p>We compare the base policy (<code>lerobot/pi05_libero_finetuned</code>); a <em>VLM baseline</em> (GPT-5 mini, naive prompting) that watches the failure video and writes the same 4-tuple with no human input; and CorrectVLA, where a person writes one task-level correction reused across all rollouts. Corrections are applied only to execution-misalignment tasks and re-executed on the base policy&rsquo;s failed episodes: 50 trials on each of 40 LIBERO tasks in distribution, 5 on each of 90 LIBERO-90 tasks out of distribution.</p>
+      <p>We compare the base policy (<code>lerobot/pi05_libero_finetuned</code>); a <em>VLM baseline</em> (GPT-5 mini, naive prompting, one attempt) that watches the failure video and writes the same 4-tuple with no human input; and CorrectVLA, where a person&rsquo;s task-level correction is reused across rollouts. Corrections are applied to the execution-misalignment tasks and re-executed on the base policy&rsquo;s failed episodes: 50 trials on each of 40 LIBERO tasks in distribution, 5 on each of 90 LIBERO-90 tasks out of distribution.</p>
     </div>
 
     <div class="grid2">
@@ -312,7 +345,7 @@
       <figure class="chart-card">
         <figcaption class="chart-card__head">
           <strong>Failures recovered</strong>
-          <span>Out of distribution, only 64 failures sit in a correctable task</span>
+          <span>Out of distribution, 64 failures fall in a correctable task</span>
         </figcaption>
         <div id="chart-funnel"></div>
       </figure>
@@ -320,29 +353,29 @@
 
     <figure class="chart-card">
       <figcaption class="chart-card__head">
-        <strong>Where a correction was written, it usually sufficed</strong>
+        <strong>Recovery was highest where a task failed the same way every time</strong>
         <span>Failed episodes recovered, out-of-distribution tasks with a written correction</span>
       </figcaption>
       <div id="chart-pertask"></div>
-      <p class="chart-card__foot">Corrections were written for four of the 13 execution-misalignment tasks, so the 10.1% out-of-distribution recovery is a lower bound on what the channel reaches. No failure in the other three modes was recovered, as the taxonomy predicts.</p>
+      <p class="chart-card__foot">Out of distribution, 64 of the 328 failures fall in the 13 execution-misalignment tasks, and the 33 recovered are about half of them, although corrections were written for only four of those tasks. The overall 10.1% is therefore a lower bound.</p>
       <details class="table-view">
-        <summary>Table 1 &mdash; simulation</summary>
+        <summary>Table 1: simulation</summary>
         <table>
           <thead><tr><th>Setting</th><th>Metric</th><th>Base &pi;<sub>0.5</sub></th><th>VLM baseline</th><th>CorrectVLA</th></tr></thead>
           <tbody>
-            <tr><td rowspan="2">In-distribution</td><td>Success</td><td>1861/2000 (93.0%)</td><td>&mdash;</td><td><b>1926/2000 (96.3%)</b></td></tr>
+            <tr><td rowspan="2">In-distribution</td><td>Success</td><td>1861/2000 (93.0%)</td><td>&ndash;</td><td><b>1926/2000 (96.3%)</b></td></tr>
             <tr><td>Failures recovered</td><td>0</td><td>0</td><td><b>65/139 (46.8%)</b></td></tr>
-            <tr><td rowspan="2">Out-of-distribution</td><td>Success</td><td>122/450 (27.1%)</td><td>&mdash;</td><td><b>155/450 (34.4%)</b></td></tr>
+            <tr><td rowspan="2">Out-of-distribution</td><td>Success</td><td>122/450 (27.1%)</td><td>&ndash;</td><td><b>155/450 (34.4%)</b></td></tr>
             <tr><td>Failures recovered</td><td>0</td><td>0</td><td><b>33/328 (10.1%)</b></td></tr>
           </tbody>
         </table>
       </details>
     </figure>
 
-    <h3 class="subhead" id="real-robot">Real robot &mdash; xArm7, &pi;<sub>0.5</sub>-DROID</h3>
+    <h3 class="subhead" id="real-robot">Real robot: xArm7, &pi;<sub>0.5</sub>-DROID</h3>
     <div class="split">
       <div class="prose">
-        <p>A UFactory xArm7 with a Robotiq 2F-85 gripper and RealSense cameras. &pi;<sub>0.5</sub>-DROID was fine-tuned in one workspace, where it reached 95.0% on pick-and-place across 20 trials. We then moved the robot base, shifting camera viewpoint and workspace geometry, and ran each condition three times with 10 trials each.</p>
+        <p>A UFactory xArm7 with a Robotiq 2F-85 gripper and RealSense cameras. &pi;<sub>0.5</sub>-DROID was fine-tuned in one workspace, where it reached 95.0% on pick-and-place across 20 trials. We then moved the robot base, shifting camera viewpoint and workspace geometry, and ran each condition three times with 10 trials each. A correction is written once per run, in 40 to 80 s, and reused across its 10 trials.</p>
       </div>
       <figure class="paper-fig">
         <button class="zoom" type="button" aria-label="Enlarge workspace figure">
@@ -355,7 +388,7 @@
     <figure class="chart-card">
       <figcaption class="chart-card__head">
         <strong>Trials that succeeded after the base was moved</strong>
-        <span>Three runs of 10 trials per condition; one correction per task, not rewritten between runs</span>
+        <span>Three runs of 10 trials per condition; one correction per run, reused across its 10 trials</span>
       </figcaption>
       <div class="legend">
         <span><i class="dot dot--base"></i>Success, base policy</span>
@@ -363,9 +396,9 @@
         <span><i class="dot dot--ring"></i>Failure</span>
       </div>
       <div id="chart-robot" class="robot"></div>
-      <p class="chart-card__foot">&dagger; The one run per condition where the object happened to fall inside the fine-tuning distribution. Elsewhere the base policy scored 0/10 to 2/10, every failure a missed grasp.</p>
+      <p class="chart-card__foot">&dagger; The one run of each same-object condition where the object happened to fall inside the fine-tuning distribution. Elsewhere the base policy scored 0/10 to 2/10, each time missing the grasp. For pick-and-place, moving the robot caused execution misalignment alone, the mode one sentence can fix.</p>
       <details class="table-view">
-        <summary>Table 2 &mdash; real robot</summary>
+        <summary>Table 2: real robot</summary>
         <table>
           <thead><tr><th>Condition</th><th colspan="3">Base &pi;<sub>0.5</sub>-DROID (runs 1&ndash;3)</th><th colspan="3">CorrectVLA (runs 1&ndash;3)</th></tr></thead>
           <tbody>
@@ -379,7 +412,7 @@
     </figure>
 
     <div class="callout callout--warn">
-      <p><strong>The other side of the boundary.</strong> Two long-horizon tasks, folding a shirt (92.5% before the shift) and stacking boxes, fail in all 30 trials after the shift, with and without correction: outside execution misalignment, the sentence has nothing to reach.</p>
+      <p><strong>Where the taxonomy says to stop.</strong> Two long-horizon tasks, folding a shirt (92.5% before the shift) and stacking boxes, stay at 0/30 after the shift, with or without correction. The policy completes at most one step and needs a plan to sequence the rest, so these tasks call for a plan rather than a magnitude, just as the taxonomy predicts.</p>
     </div>
 
     <figure class="paper-fig">
@@ -395,7 +428,7 @@
 <section class="band band--plane" id="demos">
   <div class="wrap">
     <p class="kicker">Rollouts</p>
-    <h2 class="statement">Failure and correction, side by side.</h2>
+    <h2 class="statement">Before and after one sentence, side by side.</h2>
     <p class="lede">Both clips start together and hold their final frame, so the outcome stays on screen.</p>
 
     <div class="gallery" id="gallery">
@@ -436,7 +469,7 @@
 <section class="band" id="human">
   <div class="wrap">
     <p class="kicker">What does the human supply?</p>
-    <h2 class="statement">Same video, same format &mdash; only the person recovers anything.</h2>
+    <h2 class="statement">The person&rsquo;s sense of magnitude and timing is what makes it work.</h2>
 
     <div class="versus">
       <article class="versus__side is-person">
@@ -448,7 +481,7 @@
         </dl>
       </article>
       <article class="versus__side">
-        <p class="versus__who">GPT-5 mini, naively prompted</p>
+        <p class="versus__who">GPT-5 mini, naively prompted, one attempt</p>
         <p class="versus__how">Sees the same failure video and writes the same 4-tuple.</p>
         <dl>
           <div><dt>In-distribution failures recovered</dt><dd>0 <span>/ 139</span></dd></div>
@@ -458,8 +491,8 @@
     </div>
 
     <div class="prose">
-      <p>For this channel, feedback from a foundation model cannot yet replace feedback from a person. The value lies in two judgments the person makes from one viewing and the VLM did not: <b>how large the miss was</b> in the robot&rsquo;s action units, and <b>when it happened</b>.</p>
-      <p>Most corrected tasks succeeded with the first correction; second rounds only adjusted the magnitude term. The person&rsquo;s intervention was mainly timing: a window of a few tenths of a second around the missed contact.</p>
+      <p>For this channel, a person&rsquo;s feedback carries something a foundation model does not yet supply: two judgments made from one viewing, <b>how large the miss was</b> in the robot&rsquo;s action units, and <b>when it happened</b>. Stronger models are improving quickly, and precise control is where this judgment matters most: run as a policy on RoboDojo, GPT-6 Astra generalizes to semantic tasks, while precise control remains hard.</p>
+      <p>Most corrected tasks succeeded with the first correction; second rounds adjusted the magnitude and direction terms. The window itself was short: a few tenths of a second around the key contact.</p>
     </div>
   </div>
 </section>
@@ -468,36 +501,37 @@
 <section class="band band--plane" id="discussion">
   <div class="wrap">
     <p class="kicker">Discussion</p>
-    <h2 class="statement">A channel that is not retained.</h2>
+    <h2 class="statement">Where this goes next.</h2>
 
     <div class="twocol">
       <div class="note-card">
-        <h3>The channel is misspecified for the failures that dominate</h3>
-        <p>Over 70% of failing out-of-distribution tasks lack a target or a plan, and an additive bias cannot say &ldquo;the other bowl&rdquo; nor fold a shirt. The channel cannot represent what the person means, so no feedback converges. These are the modes where foundation models generalize well.</p>
+        <h3>The other modes need a richer channel</h3>
+        <p>Over 70% of failing out-of-distribution tasks need a target or a plan, such as &ldquo;the other bowl&rdquo; or folding a shirt, which is more than an additive bias can express. These are the modes where foundation models generalize best.</p>
       </div>
       <div class="note-card">
-        <h3>Nothing is learned</h3>
-        <p>The correction is written by a person and replayed as given; every new shift or task needs a new sentence. The open problem is <em>intent propagation</em>: can a policy retain what a correction expresses and generalize it beyond the situation in which it was said?</p>
+        <h3>From replaying to retaining</h3>
+        <p>Today the correction is replayed as given, so every new shift or task gets a new sentence. The open problem is <em>intent propagation</em>: can a policy retain what a correction expresses and generalize it beyond the situation in which it was said?</p>
       </div>
     </div>
 
     <div class="prose">
-      <h3 class="h-plain">Limitations</h3>
+      <h3 class="h-plain" id="limitations">Limitations</h3>
       <ul class="limits">
         <li>The taxonomy was labelled by one annotator.</li>
         <li>A task-level correction assumes one failure pattern per task.</li>
-        <li>The corrections were written by the authors; there is no user study.</li>
-        <li>Corrections are language only, with no multimodal feedback or depth sensing.</li>
-        <li>The bias was not applied to episodes the base policy already completed.</li>
+        <li>The corrections were written by the authors; a user study is future work.</li>
+        <li>The magnitude ranges were set empirically; learning them is future work.</li>
+        <li>Corrections are language only; multimodal feedback and depth sensing are future work.</li>
+        <li>The bias was applied only to episodes the base policy had failed.</li>
       </ul>
 
       <h3 class="h-plain">Conclusion</h3>
-      <p>A generalist VLA under distribution shift fails in four ways, and only execution misalignment leaves the target and the plan intact. For that mode the smallest correction a person can give, one retrospective sentence per task, is enough: added as a bias to the frozen policy, it recovers failures in simulation and on a real robot after an environment shift, and a foundation model given the same video does not supply what the person did. Two lessons follow:</p>
+      <p>Under new instructions, a generalist VLA fails in four ways, and execution misalignment is the one that leaves the target and the plan intact. For that mode the smallest correction a person can give, one retrospective sentence per task, is often enough: added as a bias to the frozen policy, it recovers failures in simulation and on a real robot after an environment shift, and the person&rsquo;s judgment, more than the words, is what carries the correction. Two lessons follow:</p>
     </div>
 
     <div class="lessons">
       <p><span>1</span>Diagnose the mode before choosing the channel.</p>
-      <p><span>2</span>Treat the sentence as information a policy should keep &mdash; today it is replayed, never learned.</p>
+      <p><span>2</span>Treat the sentence as information a policy should keep: today it is replayed, and learning from it is the next step.</p>
     </div>
   </div>
 </section>

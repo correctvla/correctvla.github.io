@@ -11,7 +11,7 @@ export const TAXONOMY = {
     { name: 'Execution misalignment', oft: 23, pi: 22, reachable: true },
     { name: 'Task misunderstanding', oft: 47, pi: 50 },
     { name: 'Perception failure', oft: 25, pi: 22 },
-    { name: 'Multi-step planning', oft: 5, pi: 6 },
+    { name: 'Multi-step planning', oft: 5, pi: 7 },
   ],
 };
 
@@ -34,7 +34,7 @@ export const SIM = {
       stages: [
         { n: 328, label: 'failures' },
         { n: 64, label: 'in the 13 execution-misalignment tasks', soft: true },
-        { n: 33, label: 'recovered — corrections written for 4 of those tasks', accent: true },
+        { n: 33, label: 'recovered, with corrections written for 4 of those tasks', accent: true },
       ],
     },
   ],
@@ -42,7 +42,7 @@ export const SIM = {
     { task: 'open the top drawer', rec: 9, of: 10 },
     { task: 'put the black bowl in the top drawer', rec: 9, of: 10 },
     { task: 'put the black bowl on the plate', rec: 5, of: 5 },
-    { task: 'close the top drawer', note: 'recovered only some — it failed differently from episode to episode' },
+    { task: 'close the top drawer', note: 'partly recovered; its failures varied from episode to episode' },
   ],
 };
 
@@ -68,7 +68,7 @@ export const EXAMPLES = [
     tuples: [['down', 'more', '0.0–0.5 s']],
     window: [0.0, 0.5],
     length: 3.1,
-    note: 'Uncorrected, the policy hovers above the bowl for all 13 s.',
+    note: 'Without the correction, it stays at the top drawer for all 13 s.',
   },
   {
     id: 'mug',
@@ -79,7 +79,7 @@ export const EXAMPLES = [
     tuples: [['forward', 'a little', '2.6–2.8 s'], ['down', 'a little', '2.6–2.8 s']],
     window: [2.6, 2.8],
     length: 9.1,
-    note: 'Uncorrected, the rollout fails at 17.3 s.',
+    note: 'Without the correction, the rollout ends unfinished at 17.3 s.',
     demo: 'pi05-mug',
   },
 ];

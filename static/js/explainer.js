@@ -21,7 +21,7 @@ function render(root, ex) {
     '⟨', ...t.flatMap((f, i) => [i ? ' · ' : '', el('span', { text: f })]), '⟩')));
   root.querySelector('.explainer__stat').replaceChildren(
     el('b', { text: `${(b - a).toFixed(1)} s` }),
-    ` of a ${T} s rollout (${Math.round((100 * (b - a)) / T)}%) — the policy acts on its own for the rest.`);
+    ` of a ${T} s rollout (${Math.round((100 * (b - a)) / T)}%). The policy acts on its own for the rest.`);
   root.querySelector('.explainer__note').textContent = ex.note;
   const watch = root.querySelector('.explainer__watch');
   watch.hidden = !ex.demo;
