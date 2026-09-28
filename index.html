@@ -85,7 +85,7 @@
 
     <figure class="paper-fig overview-fig">
       <button class="zoom" type="button" aria-label="Enlarge overview figure">
-        <img src="./static/images/overview.jpg" alt="Overview. The frozen pi0.5 gets stuck at the top drawer; the failure is diagnosed as execution misalignment; the person says 'Down more, 0 to 0.5 s', which an LLM grounds into (z, -1, more, [0, 0.5] s) and adds as a short bias to the policy's actions; the policy then finishes, and later rollouts reuse the same sentence." width="2400" height="974">
+        <img src="./static/images/overview.jpg" alt="Overview. The frozen pi0.5 gets stuck at the top drawer; the failure is diagnosed as execution misalignment; the person says 'Down more, 0 to 0.5 s', which an LLM grounds into (z, -1, more, [0, 0.5] s) and adds as a short bias to the policy's actions, mapped from Cartesian space to joint velocities through the Jacobian pseudoinverse; the policy then finishes, and later rollouts reuse the same sentence." width="2400" height="998">
       </button>
       <figcaption><b>Overview.</b> The frozen &pi;<sub>0.5</sub> gets stuck at the top drawer and cannot recover (1), an execution misalignment (2). One sentence becomes a short bias &delta; (3); the policy finishes, and later rollouts reuse it (4). Orange marks what the person supplies; paths and actions are schematic. Click to enlarge.</figcaption>
     </figure>
@@ -298,7 +298,7 @@
     <div class="twocol">
       <div class="note-card">
         <h3>Action-space adaptation</h3>
-        <p>Corrections are specified in Cartesian space to match how people speak (&ldquo;move left,&rdquo; &ldquo;move up&rdquo;). The real xArm7 runs under joint-velocity control, so a Cartesian correction is mapped to joint velocities through the Jacobian pseudoinverse, the minimum-norm joint velocity that realizes the requested end-effector motion.</p>
+        <p>Corrections are specified in Cartesian space to match how people speak (&ldquo;move left,&rdquo; &ldquo;move up&rdquo;). The real xArm7 runs under joint-velocity control, so a Cartesian correction is mapped to joint velocities through the Jacobian pseudoinverse, the minimum-norm joint velocity that realizes the requested end-effector motion. Panel 3 of the <a href="#overview">overview figure</a> shows this mapping.</p>
       </div>
       <div class="note-card">
         <h3>What the signal assumes</h3>
@@ -482,7 +482,7 @@
       </article>
       <article class="versus__side">
         <p class="versus__who">GPT-5 mini, naively prompted, one attempt</p>
-        <p class="versus__how">Sees the same failure video and writes the same 4-tuple.</p>
+        <p class="versus__how">Sees the same failure video and is asked for the same 4-tuple.</p>
         <dl>
           <div><dt>In-distribution failures recovered</dt><dd>0 <span>/ 139</span></dd></div>
           <div><dt>Out-of-distribution failures recovered</dt><dd>0 <span>/ 328</span></dd></div>
