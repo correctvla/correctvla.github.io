@@ -89,7 +89,8 @@ button { font: inherit; }
   letter-spacing: -.02em;
 }
 .hero__subtitle { margin: 0 0 26px; max-width: 34ch; font-size: clamp(17px, 1.8vw, 21px); line-height: 1.45; color: #c9d1d9; }
-.hero__authors { margin: 0 0 28px; font-size: 15px; color: #9aa6b2; }
+.hero__authors { margin: 0 0 2px; font-size: 16px; font-weight: 500; color: #e6edf3; }
+.hero__affil { margin: 0 0 28px; font-size: 14px; color: #9aa6b2; }
 .hero__buttons { display: flex; flex-wrap: wrap; gap: 12px; }
 .btn {
   display: inline-flex;

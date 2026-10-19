@@ -33,7 +33,7 @@ export const SIM = {
       name: 'Out-of-distribution',
       stages: [
         { n: 328, label: 'failures' },
-        { n: 64, label: 'in the 13 execution-misalignment tasks', soft: true },
+        { n: 64, label: 'in the 13 instructions labelled execution misalignment', soft: true },
         { n: 33, label: 'recovered, with corrections written for 4 of those tasks', accent: true },
       ],
     },

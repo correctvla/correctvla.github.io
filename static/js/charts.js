@@ -1,7 +1,7 @@
 // Result charts, rendered as plain HTML so labels stay crisp and wrap at any width.
 import { el, tip } from './dom.js';
 
-const pct = (a, b) => `${((100 * a) / b).toFixed(1)}%`;
+const pct = (a, b) => `${(Math.round((1000 * a) / b) / 10).toFixed(1)}%`;
 
 // Show the long label if it fits inside its segment, else the short one, else none.
 function fitLabels(root) {
