@@ -33,8 +33,8 @@ export const SIM = {
       name: 'Out-of-distribution',
       stages: [
         { n: 328, label: 'failures' },
-        { n: 64, label: 'in the 13 instructions labelled execution misalignment', soft: true },
-        { n: 33, label: 'recovered, with corrections written for 4 of those tasks', accent: true },
+        { n: 64, label: 'in the 13 correctable instructions', soft: true },
+        { n: 33, label: 'recovered, with corrections for 4 of them', accent: true },
       ],
     },
   ],
@@ -42,7 +42,7 @@ export const SIM = {
     { task: 'open the top drawer', rec: 9, of: 10 },
     { task: 'put the black bowl in the top drawer', rec: 9, of: 10 },
     { task: 'put the black bowl on the plate', rec: 5, of: 5 },
-    { task: 'close the top drawer', note: 'partly recovered; its failures varied from episode to episode' },
+    { task: 'close the top drawer', note: 'partly recovered; its failures varied' },
   ],
 };
 

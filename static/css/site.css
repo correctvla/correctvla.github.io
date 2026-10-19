@@ -180,7 +180,6 @@ button { font: inherit; }
   letter-spacing: -.015em;
   color: var(--ink);
 }
-.lede { max-width: 60ch; margin: -16px 0 32px; font-size: 18px; color: var(--text-2); }
 .subhead { margin: 72px 0 16px; font-size: 22px; font-weight: 600; letter-spacing: -.01em; color: var(--ink); }
 .h-plain { margin: 40px 0 12px; font-size: 21px; font-weight: 600; color: var(--ink); }
 .more { font-size: 14px; font-weight: 600; text-decoration: none; }
@@ -196,8 +195,8 @@ button { font: inherit; }
 }
 .tuple span { color: #ffb08c; }
 
-/* ── Cards shared by charts, notes, findings ──────────────────────────── */
-.chart-card, .note-card, .finding, .mode, .versus__side, .gallery, .pipeline li, .lessons p {
+/* ── Cards shared by charts, notes, modes ───────────────────────────── */
+.chart-card, .note-card, .mode, .gallery, .pipeline li {
   background: var(--card);
   border: 1px solid var(--rule);
   border-radius: var(--radius);
@@ -228,17 +227,6 @@ button { font: inherit; }
 .table-view th, .table-view td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--rule); }
 .table-view th { font-size: 13px; font-weight: 600; color: var(--ink); }
 
-/* ── Findings ──────────────────────────────────────────────────────────── */
-.findings { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 72px; }
-.finding { display: grid; grid-template-rows: subgrid; grid-row: span 5; row-gap: 0; padding: 24px; }
-.finding__value { margin: 0; font-size: clamp(28px, 2.8vw, 36px); font-weight: 600; line-height: 1.1; letter-spacing: -.02em; color: var(--ink); }
-.finding__value span { margin: 0 .06em; color: var(--muted); font-weight: 500; }
-.finding__value em { margin: 0 .2em; font-size: .5em; font-style: normal; font-weight: 500; color: var(--muted); vertical-align: middle; }
-.finding__label { margin: 10px 0 20px; font-size: 13px; line-height: 1.45; color: var(--text-2); }
-.finding h3 { margin: 0 0 8px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 16px; font-weight: 600; line-height: 1.35; color: var(--ink); }
-.finding p:not([class]) { margin: 0 0 16px; font-size: 14.5px; line-height: 1.55; color: var(--text-2); }
-.finding .more { align-self: end; }
-.abstract .h-plain { margin-top: 0; }
 
 /* ── Taxonomy ──────────────────────────────────────────────────────────── */
 .taxbars { display: grid; gap: 14px; }
@@ -258,14 +246,6 @@ button { font: inherit; }
 .mode h3 { margin: 0; font-size: 16px; font-weight: 600; color: var(--ink); }
 .mode .share { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .mode p { margin: 0 0 12px; font-size: 14.5px; line-height: 1.55; color: var(--text-2); }
-.eg { display: grid; gap: 6px; margin: 0 0 14px; padding: 12px; border-radius: 10px; background: var(--plane); font-size: 13.5px; }
-.eg div { display: grid; gap: 1px; }
-.eg dt { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-.eg dd { margin: 0; color: var(--text); }
-.eg q { font: italic 400 15.5px/1.35 var(--serif); color: var(--ink); }
-.eg .is-right dt, .eg .is-right dd { color: var(--good-ink); font-weight: 600; }
-.mode.is-reachable .eg { background: #fff; }
-.modes__note { max-width: var(--prose); margin: 0 0 8px; font-size: 13.5px; color: var(--text-2); }
 .mode .ask { margin: auto 0 0; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 13px; }
 .ask b { color: var(--ink); }
 .mode.is-reachable { background: var(--accent-soft); border-color: var(--accent-edge); }
@@ -463,23 +443,9 @@ button { font: inherit; }
 .gallery__correction::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 2px; background: var(--accent); }
 .gallery__correction q { font: italic 400 17px var(--serif); color: var(--ink); }
 
-/* ── Human vs VLM ──────────────────────────────────────────────────────── */
-.versus { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 40px; }
-.versus__side { padding: 28px; }
-.versus__side.is-person { background: var(--accent-soft); border-color: var(--accent-edge); }
-.versus__who { margin: 0 0 4px; font-size: 18px; font-weight: 600; color: var(--ink); }
-.versus__how { margin: 0 0 22px; font-size: 14.5px; color: var(--text-2); }
-.versus dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0; }
-.versus dt { font-size: 13px; line-height: 1.4; color: var(--text-2); }
-.versus dd { margin: 4px 0 0; font-size: 40px; font-weight: 600; line-height: 1.1; letter-spacing: -.02em; color: var(--ink); }
-.versus dd span { font-size: 17px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
-
 /* ── Discussion ────────────────────────────────────────────────────────── */
 .limits { margin: 0 0 8px; padding-left: 1.2em; color: var(--text-2); }
 .limits li { margin: 4px 0; }
-.lessons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 8px; }
-.lessons p { display: flex; gap: 16px; margin: 0; padding: 28px; font: 500 24px/1.3 var(--serif); color: var(--ink); }
-.lessons span { padding-top: 6px; font: 600 13px var(--sans); color: var(--accent-ink); }
 
 /* ── Footer, lightbox, tooltip ─────────────────────────────────────────── */
 .footer { padding: 40px 24px; background: var(--dark); color: #9aa6b2; font-size: 14px; }
@@ -513,7 +479,7 @@ button { font: inherit; }
 
 /* ── Responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 1040px) {
-  .findings, .modes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .modes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pipeline li::after { display: none; }
 }
@@ -537,7 +503,7 @@ button { font: inherit; }
   .topnav__inner { padding: 0 12px; }
   .topnav__brand { display: none; }
   .topnav__links { margin-left: 0; }
-  .findings, .modes, .pipeline, .twocol, .versus, .lessons { grid-template-columns: minmax(0, 1fr); }
+  .modes, .pipeline, .twocol { grid-template-columns: minmax(0, 1fr); }
   .chart-card { padding: 18px 16px 12px; }
   .gallery { padding: 16px; }
   .gallery__groups { display: grid; width: 100%; border-radius: 12px; }
@@ -547,8 +513,6 @@ button { font: inherit; }
   .pertask__note { text-align: left; }
   .robot__group::before { width: 100%; }
   .robot__group { flex-wrap: wrap; gap: 4px; }
-  .versus dd { font-size: 34px; }
-  .lessons p { font-size: 21px; }
   .sentence { font-size: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
