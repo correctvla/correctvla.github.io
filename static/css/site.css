@@ -106,7 +106,7 @@ button { font: inherit; }
   text-decoration: none;
 }
 .btn svg { width: 18px; height: 18px; fill: currentColor; }
-.btn.is-disabled { opacity: .55; }
+.btn:hover { background: rgba(255, 255, 255, .16); }
 
 .hero__demo { display: flex; gap: 16px; }
 .clip {
